@@ -15,7 +15,7 @@ const SECTIONS = [
     { 
         id: "hero", img: "img1", label: "A CELEBRATION OF LOVE", title: "Nileena & Ajeesh", 
         body: "Inviting you to share in our joy as we begin our life together.",
-        date: "01 · 05 · 2026",
+        date: "MAY 01, 2026",
         align: "center", justify: "center",
         mobileBgPos: "60% center",
         type: "hero"
@@ -33,19 +33,20 @@ const SECTIONS = [
         mobileBgPos: "center"
     },
     { 
-        id: "details", img: "img4", label: "THE WEDDING", title: "01 · 05 · 2026", 
+        id: "details", img: "img4", label: "THE WEDDING", title: "MAY 01, 2026", 
         body: "3:00 PM | Edassery Sealine Villa Stay\nCherai, Kochi", 
         type: "cta", align: "center", justify: "flex-end",
         mobileBgPos: "center"
     },
 ];
 
-const G = "#D4AF37"; // Old Gold
-const W = "#F5F5F0"; // Silk White
-const S = "rgba(245,245,240,0.6)"; // Soft White
+const G = "#D4AF37"; // REVERTED: Old Gold
+const W = "#F5F5F0"; // REVERTED: Silk White
+const S = "rgba(245,245,240,0.6)"; // REVERTED: Soft White
+const H = "#FFFCEB"; // Ivory for Top Header (User's specific preference)
 
 /* ─────────────────────────────────────────────────────────────────────────
-   CINEMATIC BACKGROUND — (UNTOUCHED)
+   CINEMATIC BACKGROUND — GRADIENTS REVERTED
 ───────────────────────────────────────────────────────────────────────── */
 function CinematicBg({ activeIdx, scrollYProgress, isMobile }) {
     const section = SECTIONS[activeIdx];
@@ -74,9 +75,20 @@ function CinematicBg({ activeIdx, scrollYProgress, isMobile }) {
                     }}
                 />
             </AnimatePresence>
+            
             <div className="dust-layer" style={{ position: "absolute", inset: 0, zIndex: 4, pointerEvents: "none", opacity: 0.15 }} />
-            <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "rgba(5,5,5,0.2)", pointerEvents: "none" }} />
-            <div style={{ position: "absolute", inset: 0, zIndex: 3, background: "radial-gradient(circle at center, transparent 0%, rgba(5,5,5,0.6) 100%)", pointerEvents: "none" }} />
+            
+            <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "rgba(5,5,5,0.08)", pointerEvents: "none" }} />
+            
+            {/* REVERTED: Deep Obsidian Bottom Gradient */}
+            <motion.div 
+                animate={{ opacity: activeIdx === 0 ? 1 : 0.7 }}
+                style={{ 
+                    position: "absolute", inset: 0, zIndex: 3, 
+                    background: "linear-gradient(to top, rgba(5,5,5,0.85) 0%, rgba(5,5,5,0.4) 15%, transparent 35%)", 
+                    pointerEvents: "none" 
+                }} 
+            />
         </div>
     );
 }
@@ -91,7 +103,7 @@ function HeroElements({ isMobile }) {
                 initial={{ opacity: 0, scale: 1.2 }}
                 animate={{ opacity: 0.15, scale: 1 }}
                 transition={{ duration: 2, delay: 1 }}
-                style={{ position: "absolute", inset: isMobile ? "20px" : "60px", border: "0.5px solid #D4AF37" }}
+                style={{ position: "absolute", inset: isMobile ? "20px" : "60px", border: `0.5px solid ${G}` }}
             />
 
             <motion.div 
@@ -103,10 +115,8 @@ function HeroElements({ isMobile }) {
                     const angle = (i / 16) * Math.PI * 2;
                     const radiusX = isMobile ? 180 : 450;
                     const radiusY = isMobile ? 140 : 250;
-                    
                     const circleX = Math.cos(angle) * radiusX;
                     const circleY = Math.sin(angle) * radiusY;
-                    
                     const t = angle;
                     const heartX = 16 * Math.sin(t) ** 3 * (isMobile ? 15 : 35);
                     const heartY = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * (isMobile ? 10 : 25);
@@ -160,6 +170,7 @@ function EditorialText({ activeIdx, isMobile }) {
                                 <HeroElements isMobile={isMobile} />
                                 
                                 <div style={{ position: "absolute", inset: 0, padding: isMobile ? "60px 40px" : "100px" }}>
+                                    {/* Top Label Section */}
                                     <motion.div
                                         initial={{ opacity: 0, y: -30 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -170,28 +181,29 @@ function EditorialText({ activeIdx, isMobile }) {
                                         }}
                                     >
                                         <div style={{ position: 'absolute', top: '-60px', pointerEvents: 'none', zIndex: -1 }}>
-                                            <svg width={isMobile ? "180" : "250"} height={isMobile ? "180" : "250"} viewBox="0 0 200 200" style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%) rotate(-5deg)", opacity: 0.15 }}>
-                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={G} strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="600" className="anim-draw-heart-static" />
+                                            <svg width={isMobile ? "180" : "250"} height={isMobile ? "180" : "250"} viewBox="0 0 200 200" style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%) rotate(-5deg)", opacity: 0.4 }}>
+                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={H} strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="600" className="anim-draw-heart-static" />
                                             </svg>
-                                            <svg width={isMobile ? "120" : "160"} height={isMobile ? "120" : "160"} viewBox="0 0 200 200" style={{ position: "absolute", top: "40px", left: isMobile ? "-100px" : "-150px", transform: "rotate(-25deg)", opacity: 0.1 }}>
-                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={G} strokeWidth="2" fill="none" strokeLinecap="round" className="anim-pulse-heart" />
+                                            <svg width={isMobile ? "120" : "160"} height={isMobile ? "120" : "160"} viewBox="0 0 200 200" style={{ position: "absolute", top: "40px", left: isMobile ? "-100px" : "-150px", transform: "rotate(-25deg)", opacity: 0.25 }}>
+                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={H} strokeWidth="2" fill="none" strokeLinecap="round" className="anim-pulse-heart" />
                                             </svg>
-                                            <svg width={isMobile ? "120" : "160"} height={isMobile ? "120" : "160"} viewBox="0 0 200 200" style={{ position: "absolute", top: "60px", left: isMobile ? "20px" : "50px", transform: "rotate(15deg)", opacity: 0.1 }}>
-                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={G} strokeWidth="2" fill="none" strokeLinecap="round" className="anim-shimmer-heart" />
+                                            <svg width={isMobile ? "120" : "160"} height={isMobile ? "120" : "160"} viewBox="0 0 200 200" style={{ position: "absolute", top: "60px", left: isMobile ? "20px" : "50px", transform: "rotate(15deg)", opacity: 0.25 }}>
+                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={H} strokeWidth="2" fill="none" strokeLinecap="round" className="anim-shimmer-heart" />
                                             </svg>
                                         </div>
-                                        <div style={{ width: "1px", height: isMobile ? "20px" : "40px", background: G, opacity: 0.3 }} />
+                                        <div style={{ width: "1px", height: isMobile ? "20px" : "40px", background: H, opacity: 0.4 }} />
                                         <span style={{ 
                                             fontFamily: "'Montserrat', sans-serif", fontSize: isMobile ? "0.45rem" : "0.6rem", 
-                                            color: G, letterSpacing: isMobile ? "0.6em" : "1.5em", textTransform: "uppercase", textAlign: "center"
+                                            color: H, letterSpacing: isMobile ? "0.6em" : "1.5em", textTransform: "uppercase", textAlign: "center",
+                                            fontWeight: 400, textShadow: "0 1px 12px rgba(0,0,0,0.4)"
                                         }}>
                                             {data.label}
                                         </span>
                                     </motion.div>
 
                                     {/* Bottom Names + Date */}
-                                    <div style={{ position: "absolute", bottom: isMobile ? "8%" : "12%", left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center" }}>
-                                        <div style={{ position: "relative", width: "100%", height: isMobile ? "140px" : "250px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <div style={{ position: "absolute", bottom: isMobile ? "6%" : "10%", left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                        <div style={{ position: "relative", width: "100%", height: isMobile ? "130px" : "220px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                             <motion.h1
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0, x: isMobile ? -15 : -60 }}
@@ -199,7 +211,8 @@ function EditorialText({ activeIdx, isMobile }) {
                                                 style={{ 
                                                     position: "absolute", 
                                                     fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "3.5rem" : "9rem", 
-                                                    fontWeight: 300, fontStyle: "italic", color: W, top: isMobile ? "0" : "-30px",
+                                                    fontWeight: 600, fontStyle: "italic", color: W, 
+                                                    top: isMobile ? "0px" : "-10px",
                                                 }}
                                             >
                                                 Nileena
@@ -221,23 +234,35 @@ function EditorialText({ activeIdx, isMobile }) {
                                                 style={{ 
                                                     position: "absolute", 
                                                     fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "3.5rem" : "9rem", 
-                                                    fontWeight: 300, fontStyle: "italic", color: W, bottom: isMobile ? "0" : "-30px",
+                                                    fontWeight: 600, fontStyle: "italic", color: W, 
+                                                    bottom: isMobile ? "0px" : "-10px",
                                                 }}
                                             >
                                                 Ajeesh
                                             </motion.h1>
                                         </div>
+                                        
                                         <motion.div
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: 1.5, duration: 1.5 }}
                                             style={{ 
-                                                fontFamily: "'Montserrat', sans-serif", fontSize: "0.7rem", color: G, 
-                                                letterSpacing: "0.5em", marginTop: "2rem", borderTop: "0.5px solid rgba(212,175,55,0.2)", paddingTop: "1.5rem"
+                                                fontFamily: "'Montserrat', sans-serif", fontSize: "0.75rem", color: G, 
+                                                letterSpacing: "0.6em", marginTop: "1rem", borderTop: `0.5px solid rgba(212,175,55,0.2)`, paddingTop: "1.5rem",
+                                                textTransform: "uppercase"
                                             }}
                                         >
                                             {data.date}
                                         </motion.div>
+
+                                        <motion.p
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 0.4 }}
+                                            transition={{ delay: 1.8 }}
+                                            style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.5rem", color: S, letterSpacing: "0.3em", marginTop: "1.2rem" }}
+                                        >
+                                            INVITING YOU TO OUR WEDDING
+                                        </motion.p>
                                     </div>
                                 </div>
                             </motion.div>
@@ -378,7 +403,7 @@ export default function EngagementInvitation() {
                 @keyframes drawHeartOnce { from { stroke-dashoffset: 600; } to { stroke-dashoffset: 0; } }
                 .anim-draw-heart-static { 
                     animation: drawHeartOnce 5s ease-in-out forwards; 
-                    animation-delay: 3s; /* Starts after the preloader (2.5s) fades out */
+                    animation-delay: 3s;
                 }
 
                 @keyframes pulseHeart { 
