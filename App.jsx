@@ -1,152 +1,299 @@
-import React, { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, AnimatePresence, useMotionTemplate } from "framer-motion";
+import React, { useEffect, useRef, useState, useMemo } from "react";
+import { motion, useScroll, useTransform, AnimatePresence, useSpring } from "framer-motion";
 
 /* ─────────────────────────────────────────────────────────────────────────
    CONTENT & CONFIG
 ───────────────────────────────────────────────────────────────────────── */
 const IMAGES = {
-    img1: "/assets/1.JPG",
-    img2: "/assets/2.JPG",
-    img3: "/assets/3.JPG",
-    img4: "/assets/4.jpg",
-};
-
-const preloadImage = (src) => {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.src = src;
-        img.onload = resolve;
-        img.onerror = resolve;
-    });
+    img1: "/assets/1.webp",
+    img2: "/assets/2.webp",
+    img3: "/assets/3.webp",
+    img4: "/assets/4.webp",
 };
 
 const SECTIONS = [
-    { id: "hero", img: "img1", label: "The Union Of", title: "Libin & Aida", subtitle: "03 · 05 · 26", type: "bottom-left" },
-    { id: "story1", img: "img2", label: "CHAPTER I", title: "Our Story", body: "A beautiful journey beginning with a single step.", type: "bottom-left" },
-    { id: "story2", img: "img3", label: "CHAPTER II", title: "Two Hearts", body: "Two lives blending into one beautiful adventure.", type: "bottom-right" },
-    { id: "details", img: "img4", label: "THE ENGAGEMENT", title: "Join Us", body: "03 · 05 · 2026\n3:00 PM\nEdassery Sealine Villa Stay    \nCherai, Kochi", type: "cta-glass" },
+    { 
+        id: "hero", img: "img1", label: "A CELEBRATION OF LOVE", title: "Nileena & Ajeesh", 
+        body: "Inviting you to share in our joy as we begin our life together.",
+        date: "01 · 05 · 2026",
+        align: "center", justify: "center",
+        mobileBgPos: "60% center",
+        type: "hero"
+    },
+    { 
+        id: "story1", img: "img2", label: "CHAPTER I", title: "The Union", 
+        body: "A beautiful journey beginning with a single step, leading us to our forever.",
+        align: "flex-start", justify: "center",
+        mobileBgPos: "center"
+    },
+    { 
+        id: "story2", img: "img3", label: "CHAPTER II", title: "The Promise", 
+        body: "Bound by love and guided by grace, two hearts becoming one.",
+        align: "flex-end", justify: "center",
+        mobileBgPos: "center"
+    },
+    { 
+        id: "details", img: "img4", label: "THE WEDDING", title: "01 · 05 · 2026", 
+        body: "3:00 PM | Edassery Sealine Villa Stay\nCherai, Kochi", 
+        type: "cta", align: "center", justify: "flex-end",
+        mobileBgPos: "center"
+    },
 ];
 
-const IMG_POS_D = { img1: "50% 30%", img2: "50% 20%", img3: "50% 20%", img4: "50% 30%" };
-const IMG_POS_M = { img1: "50% 35%", img2: "50% 20%", img3: "50% 20%", img4: "50% 35%" };
+const G = "#D4AF37"; // Old Gold
+const W = "#F5F5F0"; // Silk White
+const S = "rgba(245,245,240,0.6)"; // Soft White
 
 /* ─────────────────────────────────────────────────────────────────────────
-   BG STAGE — Precise Section-Scoped Scanning
+   CINEMATIC BACKGROUND — (UNTOUCHED)
 ───────────────────────────────────────────────────────────────────────── */
-function BgStage({ activeIdx, isMobile }) {
-    const targetImg = SECTIONS[activeIdx]?.img;
-
-    const base = { position: "absolute", inset: "-15%", backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundColor: "#040301" };
+function CinematicBg({ activeIdx, scrollYProgress, isMobile }) {
+    const section = SECTIONS[activeIdx];
+    const targetImg = section?.img;
+    const start = activeIdx * 0.25;
+    const end = (activeIdx + 1) * 0.25;
+    const scrollScale = useTransform(scrollYProgress, [start, end], [1.0, 1.25]);
+    const smoothScale = useSpring(scrollScale, { stiffness: 45, damping: 20 });
+    const bgPos = isMobile ? (section?.mobileBgPos || "center") : "center";
 
     return (
-        <div style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden", background: "#040301" }}>
-            {/* Pure Framer Motion declarative fade transitions */}
+        <div style={{ position: "fixed", inset: 0, zIndex: 0, background: "#050505", overflow: "hidden" }}>
             <AnimatePresence>
-                {targetImg && (
-                    <motion.div
-                        key={targetImg}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 1.4, ease: "easeInOut" }}
-                        style={{
-                            ...base,
-                            backgroundImage: `url("${IMAGES[targetImg]}")`,
-                            backgroundPosition: isMobile ? IMG_POS_M[targetImg] : IMG_POS_D[targetImg],
-                            zIndex: 1
-                        }}
-                    />
-                )}
+                <motion.div
+                    key={targetImg}
+                    initial={{ opacity: 0, filter: "blur(15px)" }}
+                    animate={{ opacity: 0.9, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, filter: "blur(10px)" }}
+                    transition={{ duration: 2.5, ease: [0.16, 1, 0.3, 1] }}
+                    style={{
+                        position: "absolute", inset: "-10%",
+                        backgroundImage: `url("${IMAGES[targetImg]}")`,
+                        backgroundSize: "cover",
+                        backgroundPosition: bgPos,
+                        scale: smoothScale
+                    }}
+                />
             </AnimatePresence>
-
-            <div style={{ position: "absolute", inset: 0, zIndex: 6, pointerEvents: "none", background: "radial-gradient(circle at 50% 40%, transparent 0%, rgba(4,3,1,0.2) 60%, rgba(4,3,1,0.85) 100%)" }} />
-            <div style={{ position: "absolute", inset: 0, zIndex: 7, pointerEvents: "none", background: "linear-gradient(to bottom, rgba(4,3,1,0.5), transparent 40%, transparent 60%, rgba(4,3,1,0.98) 100%)" }} />
+            <div className="dust-layer" style={{ position: "absolute", inset: 0, zIndex: 4, pointerEvents: "none", opacity: 0.15 }} />
+            <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "rgba(5,5,5,0.2)", pointerEvents: "none" }} />
+            <div style={{ position: "absolute", inset: 0, zIndex: 3, background: "radial-gradient(circle at center, transparent 0%, rgba(5,5,5,0.6) 100%)", pointerEvents: "none" }} />
         </div>
     );
 }
 
-const G = "#D4AF37"; const W = "#FFFFFF"; const Wm = "rgba(255,255,255,0.85)";
-
-function SplitText({ text, delay = 0 }) {
-    if (!text) return null;
+/* ─────────────────────────────────────────────────────────────────────────
+   HERO ANIMATIONS — Balanced Sparkles
+───────────────────────────────────────────────────────────────────────── */
+function HeroElements({ isMobile }) {
     return (
-        <div style={{ display: "inline-block" }}>
-            {Array.from(text).map((char, i) => (
-                <motion.span key={i} initial={{ opacity: 0, y: 10, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ duration: 0.6, delay: delay + i * 0.02, ease: [0.16, 1, 0.3, 1] }} style={{ display: "inline-block", whiteSpace: char === " " ? "pre" : "normal" }}>{char}</motion.span>
-            ))}
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 25 }}>
+            <motion.div
+                initial={{ opacity: 0, scale: 1.2 }}
+                animate={{ opacity: 0.15, scale: 1 }}
+                transition={{ duration: 2, delay: 1 }}
+                style={{ position: "absolute", inset: isMobile ? "20px" : "60px", border: "0.5px solid #D4AF37" }}
+            />
+
+            <motion.div 
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 45, ease: "linear" }}
+                style={{ position: "absolute", top: "50%", left: "50%", width: "100vw", height: "100vh", transform: "translate(-50%, -50%)" }}
+            >
+                {[...Array(16)].map((_, i) => {
+                    const angle = (i / 16) * Math.PI * 2;
+                    const radiusX = isMobile ? 180 : 450;
+                    const radiusY = isMobile ? 140 : 250;
+                    
+                    const circleX = Math.cos(angle) * radiusX;
+                    const circleY = Math.sin(angle) * radiusY;
+                    
+                    const t = angle;
+                    const heartX = 16 * Math.sin(t) ** 3 * (isMobile ? 15 : 35);
+                    const heartY = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * (isMobile ? 10 : 25);
+
+                    return (
+                        <motion.div
+                            key={i}
+                            animate={{ 
+                                x: [circleX, heartX, circleX], 
+                                y: [circleY, heartY, circleY],
+                                opacity: [0, 0.5, 0],
+                                scale: [0.3, 0.7, 0.3]
+                            }}
+                            transition={{ repeat: Infinity, duration: 15, ease: "easeInOut", delay: i * 0.4 }}
+                            style={{ 
+                                position: "absolute", top: "50%", left: "50%",
+                                fontSize: isMobile ? "0.6rem" : "0.9rem", color: G,
+                                textShadow: `0 0 12px ${G}`
+                            }}
+                        >
+                            ♥
+                        </motion.div>
+                    );
+                })}
+            </motion.div>
         </div>
     );
 }
 
-const Headline = ({ children, size = "max(3.2rem, 8vw)", style = {} }) => (
-    <div style={{ fontFamily: "'EB Garamond', serif", fontWeight: 700, fontSize: size, color: W, lineHeight: 1.0, letterSpacing: "-0.01em", ...style }}><SplitText text={children} /></div>
-);
-const SubHeadline = ({ children, style = {} }) => (
-    <div style={{ fontFamily: "'EB Garamond', serif", fontWeight: 400, fontSize: "max(1.5rem, 3vw)", fontStyle: "normal", color: G, marginTop: "0.2rem", ...style }}><SplitText text={children} delay={0.2} /></div>
-);
-const Label = ({ children, style = {} }) => (
-    <div style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 700, fontSize: "calc(0.5rem + 0.2vw)", letterSpacing: "0.6em", textTransform: "uppercase", color: G, ...style }}><SplitText text={children} delay={0.1} /></div>
-);
-const BodyText = ({ children, style = {} }) => (
-    <motion.div initial={{ opacity: 0, y: 15, filter: "blur(8px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ duration: 1.2, delay: 0.4 }} style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 400, fontSize: "max(0.85rem, 1.1vw)", color: Wm, lineHeight: 1.8, letterSpacing: "0.04em", whiteSpace: "pre-line", ...style }}>{children}</motion.div>
-);
-const Rule = ({ width = 60, style = {} }) => (
-    <motion.div initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }} transition={{ duration: 1.2, delay: 0.3 }} style={{ display: "flex", alignItems: "center", gap: "1rem", ...style }}>
-        <div style={{ height: "0.5px", width, background: `linear-gradient(to right, transparent, ${G})` }} /><div style={{ width: "3px", height: "3px", border: `1px solid ${G}`, transform: "rotate(45deg)" }} /><div style={{ height: "0.5px", width, background: `linear-gradient(to left, transparent, ${G})` }} />
-    </motion.div>
-);
-
-function TextStage({ activeIdx, isMobile, onSave }) {
+/* ─────────────────────────────────────────────────────────────────────────
+   REFINED TEXT PLACEMENT
+───────────────────────────────────────────────────────────────────────── */
+function EditorialText({ activeIdx, isMobile }) {
     return (
         <div style={{ position: "fixed", inset: 0, zIndex: 20, pointerEvents: "none" }}>
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
                 {SECTIONS.map((data, idx) => {
                     if (idx !== activeIdx) return null;
 
-                    const isRight = data.type === "bottom-right";
-                    const isCenter = data.type === "bottom-center" || data.type === "cta-glass" || data.type === "family-scroll" || data.type === "text-only-blank";
-                    const isGlass = data.type === "cta-glass";
-                    const isFullCenter = data.type === "text-only-blank";
-                    const isBottomCenter = data.type === "bottom-center" || data.type === "family-scroll";
+                    // CREATIVE HERO LAYOUT
+                    if (data.type === "hero") {
+                        return (
+                            <motion.div
+                                key={data.id}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 1.5 }}
+                                style={{ position: "absolute", inset: 0 }}
+                            >
+                                <HeroElements isMobile={isMobile} />
+                                
+                                <div style={{ position: "absolute", inset: 0, padding: isMobile ? "60px 40px" : "100px" }}>
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -30 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.5, duration: 1.5 }}
+                                        style={{ 
+                                            position: "absolute", top: isMobile ? "8%" : "12%", left: 0, right: 0,
+                                            display: "flex", flexDirection: "column", alignItems: "center", gap: "10px"
+                                        }}
+                                    >
+                                        <div style={{ position: 'absolute', top: '-60px', pointerEvents: 'none', zIndex: -1 }}>
+                                            <svg width={isMobile ? "180" : "250"} height={isMobile ? "180" : "250"} viewBox="0 0 200 200" style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%) rotate(-5deg)", opacity: 0.15 }}>
+                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={G} strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="600" className="anim-draw-heart-static" />
+                                            </svg>
+                                            <svg width={isMobile ? "120" : "160"} height={isMobile ? "120" : "160"} viewBox="0 0 200 200" style={{ position: "absolute", top: "40px", left: isMobile ? "-100px" : "-150px", transform: "rotate(-25deg)", opacity: 0.1 }}>
+                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={G} strokeWidth="2" fill="none" strokeLinecap="round" className="anim-pulse-heart" />
+                                            </svg>
+                                            <svg width={isMobile ? "120" : "160"} height={isMobile ? "120" : "160"} viewBox="0 0 200 200" style={{ position: "absolute", top: "60px", left: isMobile ? "20px" : "50px", transform: "rotate(15deg)", opacity: 0.1 }}>
+                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={G} strokeWidth="2" fill="none" strokeLinecap="round" className="anim-shimmer-heart" />
+                                            </svg>
+                                        </div>
+                                        <div style={{ width: "1px", height: isMobile ? "20px" : "40px", background: G, opacity: 0.3 }} />
+                                        <span style={{ 
+                                            fontFamily: "'Montserrat', sans-serif", fontSize: isMobile ? "0.45rem" : "0.6rem", 
+                                            color: G, letterSpacing: isMobile ? "0.6em" : "1.5em", textTransform: "uppercase", textAlign: "center"
+                                        }}>
+                                            {data.label}
+                                        </span>
+                                    </motion.div>
 
-                    // Determine horizontal positioning
-                    const left = isCenter ? "50%" : (isRight ? "auto" : (isMobile ? "8vw" : "10vw"));
-                    const right = isRight ? (isMobile ? "8vw" : "10vw") : "auto";
-                    const x = isCenter ? "-50%" : "0%";
+                                    {/* Bottom Names + Date */}
+                                    <div style={{ position: "absolute", bottom: isMobile ? "8%" : "12%", left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                        <div style={{ position: "relative", width: "100%", height: isMobile ? "140px" : "250px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            <motion.h1
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0, x: isMobile ? -15 : -60 }}
+                                                transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+                                                style={{ 
+                                                    position: "absolute", 
+                                                    fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "3.5rem" : "9rem", 
+                                                    fontWeight: 300, fontStyle: "italic", color: W, top: isMobile ? "0" : "-30px",
+                                                }}
+                                            >
+                                                Nileena
+                                            </motion.h1>
 
-                    // Determine vertical positioning
-                    const top = isFullCenter ? "50%" : "auto";
-                    const bottom = isFullCenter ? "auto" : (isBottomCenter ? (isMobile ? "12vh" : "18vh") : (isMobile ? "12vh" : "15vh"));
-                    const originY = isFullCenter ? "-50%" : "0%"; // We add the entrance/exit animation offsets to this base
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.5 }}
+                                                animate={{ opacity: 0.6, scale: 1 }}
+                                                transition={{ delay: 0.8, duration: 2 }}
+                                                style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "2rem" : "4rem", color: G, fontStyle: "italic", zIndex: 1 }}
+                                            >
+                                                &
+                                            </motion.div>
+
+                                            <motion.h1
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0, x: isMobile ? 15 : 60 }}
+                                                transition={{ duration: 2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                                                style={{ 
+                                                    position: "absolute", 
+                                                    fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "3.5rem" : "9rem", 
+                                                    fontWeight: 300, fontStyle: "italic", color: W, bottom: isMobile ? "0" : "-30px",
+                                                }}
+                                            >
+                                                Ajeesh
+                                            </motion.h1>
+                                        </div>
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 1.5, duration: 1.5 }}
+                                            style={{ 
+                                                fontFamily: "'Montserrat', sans-serif", fontSize: "0.7rem", color: G, 
+                                                letterSpacing: "0.5em", marginTop: "2rem", borderTop: "0.5px solid rgba(212,175,55,0.2)", paddingTop: "1.5rem"
+                                            }}
+                                        >
+                                            {data.date}
+                                        </motion.div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        );
+                    }
 
                     return (
                         <motion.div
                             key={data.id}
-                            initial={{ opacity: 0, x, y: `calc(${originY} + 40px)`, filter: "blur(12px)" }}
-                            animate={{ opacity: 1, x, y: originY, filter: "blur(0px)" }}
-                            exit={{ opacity: 0, x, y: `calc(${originY} - 40px)`, filter: "blur(12px)" }}
-                            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                            style={{
-                                position: "absolute",
-                                left, right, top, bottom,
-                                textAlign: isCenter ? "center" : isRight ? "right" : "left",
-                                maxWidth: isFullCenter ? "80vw" : (isGlass ? "min(900px, 80vw)" : "min(1200px, 80vw)"),
-                                width: "100%",
-                                pointerEvents: "auto",
-                                ...(isGlass ? { background: "rgba(5,4,2,0.55)", border: "1px solid rgba(212,175,55,0.20)", backdropFilter: "blur(80px)", padding: isMobile ? "10vw 6vw" : "6vw 8vw", boxShadow: "0 80px 160px rgba(0,0,0,0.8)", borderRadius: "2px" } : {})
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 1.8, ease: [0.19, 1, 0.22, 1] }}
+                            style={{ 
+                                position: "absolute", inset: 0, padding: isMobile ? "40px" : "80px",
+                                display: "flex", alignItems: data.justify, justifyContent: data.align,
+                                textAlign: isMobile ? "center" : (data.align === "flex-start" ? "left" : data.align === "flex-end" ? "right" : "center")
                             }}
                         >
-                            <Label style={{ marginBottom: isMobile ? "0.8rem" : "1rem" }}>{data.label}</Label>
-                            <Headline size={isMobile ? (isFullCenter ? "max(1.8rem, 8vw)" : "max(2.5rem, 9vw)") : (isFullCenter ? "max(2.8rem, 5.5vw)" : "max(3.2rem, 7vw)")} style={{ whiteSpace: isMobile ? "normal" : "nowrap" }}>{data.title}</Headline>
-                            <Rule width={isFullCenter ? 100 : 50} style={{ margin: (isMobile ? "1rem 0" : "1.2rem 0"), justifyContent: isCenter ? "center" : isRight ? "flex-end" : "flex-start" }} />
-                            {data.subtitle && <SubHeadline>{data.subtitle}</SubHeadline>}
-                            {data.body && <BodyText style={{ maxWidth: isFullCenter ? 650 : 450, marginTop: "1rem", marginLeft: (isCenter || isRight) ? "auto" : 0, marginRight: isCenter ? "auto" : 0, fontSize: isFullCenter ? "max(1rem, 1.3vw)" : "max(0.85rem, 1.1vw)" }}>{data.body}</BodyText>}
-                            {isGlass && (
-                                <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", justifyContent: "center", marginTop: isMobile ? "4rem" : "5rem" }}>
-                                    <button onClick={onSave} className="lux-btn prime">Save Date</button>
-                                    <a href="https://maps.app.goo.gl/5hhUFH1Bdn6ayEFa6?g_st=iw" target="_blank" rel="noreferrer" className="lux-btn ghost">Directions</a>
-                                </div>
-                            )}
+                            <div style={{ maxWidth: isMobile ? "100%" : "600px", display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : (data.align === "flex-start" ? "flex-start" : data.align === "flex-end" ? "flex-end" : "center") }}>
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 0.8 }}
+                                    transition={{ delay: 0.5 }}
+                                    style={{ 
+                                        fontFamily: "'Montserrat', sans-serif", fontSize: "0.55rem", color: G, 
+                                        letterSpacing: "1em", textTransform: "uppercase", marginBottom: "2rem"
+                                    }}
+                                >
+                                    {data.label}
+                                </motion.div>
+
+                                <h1 style={{ 
+                                    fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "3rem" : "6rem", 
+                                    fontWeight: 300, fontStyle: "italic", color: W, lineHeight: 1.1, marginBottom: "2.5rem"
+                                }}>
+                                    {data.title}
+                                </h1>
+
+                                <div style={{ width: "60px", height: "1px", background: G, opacity: 0.4, marginBottom: "2.5rem" }} />
+
+                                <p style={{ 
+                                    fontFamily: "'Montserrat', sans-serif", fontSize: isMobile ? "0.85rem" : "0.75rem", 
+                                    color: S, lineHeight: 2.2, letterSpacing: "0.2em", textTransform: "uppercase",
+                                    fontWeight: 200, whiteSpace: "pre-line"
+                                }}>
+                                    {data.body}
+                                </p>
+
+                                {data.type === "cta" && (
+                                    <div style={{ marginTop: "4rem", display: "flex", gap: "1.5rem", pointerEvents: "auto" }}>
+                                        <button className="p-btn">Save Date</button>
+                                        <button className="p-btn ghost">Venue</button>
+                                    </div>
+                                )}
+                            </div>
                         </motion.div>
                     );
                 })}
@@ -155,71 +302,20 @@ function TextStage({ activeIdx, isMobile, onSave }) {
     );
 }
 
-function Preloader({ isReady, onEnter }) {
+function Preloader() {
     return (
         <motion.div
-            exit={{ y: "-100%", opacity: 0, scale: 0.98 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            onAnimationComplete={() => {
-                // This will attempt to play audio when the fade animation is done.
-                // Note: Most mobile browsers will still block this until they detect a manual user interaction.
-            }}
-            style={{
-                position: "fixed", inset: 0, zIndex: 1000,
-                background: "#040301",
-                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"
-            }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5 }}
+            style={{ position: "fixed", inset: 0, zIndex: 1000, background: "#050505", display: "flex", alignItems: "center", justifyContent: "center" }}
         >
-            <div style={{ position: "relative", width: "100px", height: "100px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {/* Radiating Rings */}
-                {[...Array(3)].map((_, i) => (
-                    <motion.div
-                        key={i}
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 2.2, opacity: 0 }}
-                        transition={{ duration: 2, repeat: Infinity, delay: i * 0.5, ease: "easeOut" }}
-                        style={{ position: "absolute", width: "40px", height: "40px", border: `0.5px solid ${G}`, borderRadius: "50%" }}
-                    />
-                ))}
-
-                {/* Heart Drawing */}
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" style={{ position: "relative", zIndex: 10 }}>
-                    <motion.path
-                        d="M12 21l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21z"
-                        initial={{ pathLength: 0, opacity: 0 }}
-                        animate={{ pathLength: 1, opacity: 1 }}
-                        transition={{ duration: 1.2, ease: "easeInOut" }}
-                        stroke={G}
-                        strokeWidth="0.8"
-                    />
-                    <motion.path
-                        d="M12 21l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21z"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: [0, 0.4, 0] }}
-                        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                        fill={G}
-                    />
-                </svg>
-            </div>
-
-            <div style={{ marginTop: "3rem", textAlign: "center" }}>
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.8 }}
-                    style={{ fontFamily: "'EB Garamond', serif", fontSize: "1.4rem", fontWeight: 400, letterSpacing: "0.2em", color: W, marginBottom: "0.8rem" }}
-                >
-                    A Union of Two Souls
-                </motion.div>
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.5 }}
-                    transition={{ delay: 1.0, duration: 1 }}
-                    style={{ fontFamily: "'Manrope', sans-serif", fontSize: "0.6rem", textTransform: "uppercase", letterSpacing: "1.2em", color: W, paddingLeft: "1.2em" }}
-                >
-                    Libin & Aida
-                </motion.div>
-            </div>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                style={{ fontFamily: "'Cormorant Garamond', serif", color: G, fontSize: "2rem", letterSpacing: "0.3em", fontStyle: "italic" }}
+            >
+                N & A
+            </motion.div>
         </motion.div>
     );
 }
@@ -227,180 +323,93 @@ function Preloader({ isReady, onEnter }) {
 export default function EngagementInvitation() {
     const [activeIdx, setActiveIdx] = useState(0);
     const [isReady, setIsReady] = useState(false);
-    const [isStarted, setIsStarted] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const audioRef = useRef(null);
     const { scrollYProgress } = useScroll();
 
-    // Toggle Audio manually
-    const toggleAudio = (e) => {
-        if (e) e.stopPropagation();
-        if (!audioRef.current) return;
-        if (isPlaying) {
-            audioRef.current.pause();
-            setIsPlaying(false);
-        } else {
-            audioRef.current.play().then(() => setIsPlaying(true)).catch(() => { });
-        }
-    };
-
     useEffect(() => {
-        const handleInteraction = () => {
-            if (audioRef.current && audioRef.current.paused) {
-                audioRef.current.play().then(() => setIsPlaying(true)).catch(() => { });
-            }
-            document.removeEventListener("click", handleInteraction);
-            document.removeEventListener("touchstart", handleInteraction);
-        };
-        document.addEventListener("click", handleInteraction);
-        document.addEventListener("touchstart", handleInteraction);
-        return () => {
-            document.removeEventListener("click", handleInteraction);
-            document.removeEventListener("touchstart", handleInteraction);
-        };
+        const check = () => setIsMobile(window.innerWidth < 900);
+        check(); window.addEventListener("resize", check);
+        setTimeout(() => setIsReady(true), 2500);
+        return () => window.removeEventListener("resize", check);
     }, []);
 
     useEffect(() => {
-        // Preload all 4 images before dropping the preloader veil, combined with minimum 2.2s delay
-        const initialImages = [IMAGES.img1, IMAGES.img2, IMAGES.img3, IMAGES.img4];
-        const minTime = new Promise(resolve => setTimeout(resolve, 2200));
-        const imgsLoad = Promise.all(initialImages.map(preloadImage));
-
-        Promise.all([minTime, imgsLoad]).then(() => {
-            setIsReady(true);
-            // Attempt to start audio automatically when fade happens
-            if (audioRef.current && audioRef.current.paused) {
-                audioRef.current.play().then(() => setIsPlaying(true)).catch(() => { });
-            }
-        });
-    }, []);
-
-    useEffect(() => {
-        const checkMob = () => setIsMobile(window.innerWidth < 900);
-        checkMob(); window.addEventListener("resize", checkMob);
-
-        // Layout: sections 0-3 → 100vh each
-        let prevIdx = -1;
-        let ticking = false;
-        const detectSection = () => {
-            const vh = window.innerHeight;
-            const scrollY = window.scrollY;
-            const midpoint = scrollY + vh * 0.5;
-
-            let idx = Math.min(Math.floor(midpoint / vh), 3);
-
-            if (idx !== prevIdx) {
-                prevIdx = idx;
-                setActiveIdx(idx);
-            }
-        };
         const handleScroll = () => {
-            if (ticking) return;
-            ticking = true;
-            requestAnimationFrame(() => { detectSection(); ticking = false; });
+            const vh = window.innerHeight;
+            const idx = Math.min(Math.floor((window.scrollY + vh * 0.5) / vh), 3);
+            setActiveIdx(idx);
         };
         window.addEventListener("scroll", handleScroll, { passive: true });
-        detectSection(); // initial
-        return () => { window.removeEventListener("scroll", handleScroll); window.removeEventListener("resize", checkMob); };
+        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const saveCalendar = () => {
-        const ev = [
-            "BEGIN:VCALENDAR",
-            "VERSION:2.0",
-            "BEGIN:VEVENT",
-            "SUMMARY:Engagement – Libin & Aida",
-            "DTSTART:20260503T150000",
-            "LOCATION:Edassery Sealine Villa Stay, Cherai, Kochi",
-            "DESCRIPTION:Join us for the engagement of Libin & Aida.",
-            "END:VEVENT",
-            "END:VCALENDAR"
-        ].join("\r\n");
-        const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([ev], { type: "text/calendar" })); a.download = "Engagement_Invitation.ics"; a.click();
-    };
-
     return (
-        <div style={{ background: "#040301", color: W, overflowX: "hidden" }}>
+        <div style={{ background: "#050505", color: W, overflowX: "hidden" }}>
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400;1,700&family=Manrope:wght@300;400;600;700&display=swap');
+                @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@100;200;300&display=swap');
                 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
                 html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
-                body { -webkit-font-smoothing: antialiased; letter-spacing: 0.01em; background: #040301; overflow-x: hidden; }
-                .snap-section { height: 100vh; scroll-snap-align: start; scroll-snap-stop: always; position: relative; }
-                .family-section { scroll-snap-align: start; scroll-snap-stop: always; position: relative; }
-                @media (max-width: 899px) { .family-section { height: 180vh; } }
-                @media (min-width: 900px) { .family-section { height: 100vh; } }
-                .lux-btn { padding: 1.4rem 3.5rem; font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 0.65rem; letter-spacing: 0.4em; text-transform: uppercase; cursor: pointer; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); border: none; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; min-width: 220px; }
-                .lux-btn:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-                .lux-btn:active { transform: translateY(0); }
-                .lux-btn.prime { background: ${G}; color: #000; }
-                .lux-btn.ghost { border: 1px solid ${G}; color: ${G}; background: transparent; }
-
-                /* Music Waves */
-                .music-wave { width: 2px; background: ${G}; border-radius: 1px; animation: wave 1.2s ease-in-out infinite; transform-origin: bottom; }
-                @keyframes wave {
-                    0%, 100% { transform: scaleY(0.4); opacity: 0.5; }
-                    50% { transform: scaleY(1.2); opacity: 1; }
+                body { background: #050505; -webkit-font-smoothing: antialiased; }
+                .snap-sec { height: 100vh; scroll-snap-align: start; scroll-snap-stop: always; }
+                
+                .p-btn {
+                    padding: 1rem 2.8rem;
+                    font-family: 'Montserrat', sans-serif;
+                    font-size: 0.6rem;
+                    letter-spacing: 0.4em;
+                    text-transform: uppercase;
+                    cursor: pointer;
+                    transition: 0.5s;
+                    border: none;
+                    font-weight: 200;
                 }
-                .wave-1 { animation-delay: 0.1s; }
-                .wave-2 { animation-delay: 0.3s; }
-                .wave-3 { animation-delay: 0.5s; }
-                .wave-4 { animation-delay: 0.2s; }
+                .p-btn:not(.ghost) { background: ${G}; color: #000; }
+                .p-btn.ghost { background: transparent; border: 1px solid rgba(212,175,55,0.3); color: ${G}; }
+                .p-btn:hover { background: ${W}; color: #000; letter-spacing: 0.5em; }
 
-                /* Pulse for scroll indicator */
-                @keyframes pulse {
-                    0% { transform: translate(-50%, 0); opacity: 0.3; }
-                    50% { transform: translate(-50%, 10px); opacity: 0.8; }
-                    100% { transform: translate(-50%, 0); opacity: 0.3; }
+                .dust-layer {
+                    background-image: radial-gradient(circle, rgba(212,175,55,0.3) 1px, transparent 1px);
+                    background-size: 150px 150px;
+                    animation: dust-float 100s linear infinite;
+                }
+                @keyframes dust-float { from { transform: translateY(0); } to { transform: translateY(-1500px); } }
+
+                /* Diverse Heart Animations - With Delay to start after preloader */
+                @keyframes drawHeartOnce { from { stroke-dashoffset: 600; } to { stroke-dashoffset: 0; } }
+                .anim-draw-heart-static { 
+                    animation: drawHeartOnce 5s ease-in-out forwards; 
+                    animation-delay: 3s; /* Starts after the preloader (2.5s) fades out */
+                }
+
+                @keyframes pulseHeart { 
+                    0% { transform: scale(1); opacity: 0.05; }
+                    50% { transform: scale(1.15); opacity: 0.2; }
+                    100% { transform: scale(1); opacity: 0.05; }
+                }
+                .anim-pulse-heart { 
+                    animation: pulseHeart 4s ease-in-out infinite; 
+                    transform-origin: center;
+                    animation-delay: 3.5s;
+                }
+
+                @keyframes shimmerHeart {
+                    0% { opacity: 0.1; stroke-width: 2; }
+                    50% { opacity: 0.3; stroke-width: 4; }
+                    100% { opacity: 0.1; stroke-width: 2; }
+                }
+                .anim-shimmer-heart { 
+                    animation: shimmerHeart 3s ease-in-out infinite; 
+                    animation-delay: 3.2s;
                 }
             `}</style>
+
             <AnimatePresence>{!isReady && <Preloader />}</AnimatePresence>
-            <BgStage scrollYProgress={scrollYProgress} activeIdx={activeIdx} isMobile={isMobile} />
-            <TextStage activeIdx={activeIdx} isMobile={isMobile} onSave={saveCalendar} />
 
-            {/* Audio Element & Floating Toggle */}
-            <audio ref={audioRef} src="/assets/song.mp3" loop />
-            <button
-                onClick={toggleAudio}
-                style={{
-                    position: "fixed", bottom: isMobile ? "20px" : "30px", right: isMobile ? "20px" : "30px", zIndex: 100,
-                    background: "rgba(5,4,2,0.5)", backdropFilter: "blur(12px)", border: `1px solid rgba(212,175,55,0.25)`,
-                    color: G, width: isMobile ? "40px" : "50px", height: isMobile ? "40px" : "50px", borderRadius: "50%",
-                    display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-                    boxShadow: "0 10px 25px rgba(0,0,0,0.5)", transition: "all 0.4s ease"
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.1)"; e.currentTarget.style.background = "rgba(212,175,55,0.15)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.background = "rgba(5,4,2,0.5)"; }}
-            >
-                {isPlaying ? (
-                    <div style={{ display: "flex", alignItems: "flex-end", gap: "2px", height: "14px" }}>
-                        <div className="music-wave wave-1" style={{ height: "100%" }} />
-                        <div className="music-wave wave-2" style={{ height: "100%" }} />
-                        <div className="music-wave wave-3" style={{ height: "100%" }} />
-                        <div className="music-wave wave-4" style={{ height: "100%" }} />
-                    </div>
-                ) : (
-                    <svg width={isMobile ? "18" : "22"} height={isMobile ? "18" : "22"} viewBox="0 0 24 24" fill="currentColor" style={{ opacity: 0.6 }}>
-                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
-                        <line x1="2" y1="2" x2="22" y2="22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                )}
-            </button>
+            <CinematicBg activeIdx={activeIdx} scrollYProgress={scrollYProgress} isMobile={isMobile} />
+            <EditorialText activeIdx={activeIdx} isMobile={isMobile} />
 
-            {activeIdx === 0 && (
-                <div style={{
-                    position: "fixed", bottom: isMobile ? "20px" : "30px", left: "50%", transform: "translateX(-50%)",
-                    zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", gap: "8px",
-                    animation: "pulse 2s infinite ease-in-out"
-                }}>
-                    <div style={{ width: "1px", height: "40px", background: `linear-gradient(to bottom, transparent, ${G})` }} />
-                    <span style={{ fontFamily: "Manrope", fontSize: "0.5rem", color: G, letterSpacing: "0.2em", textTransform: "uppercase" }}>Scroll</span>
-                </div>
-            )}
-
-            <div style={{ position: "relative", zIndex: 10 }}>
-                {SECTIONS.map((s) => <div key={s.id} id={s.id} className={s.id === 'family' ? 'family-section' : 'snap-section'} />)}
+            <div style={{ position: "relative", zIndex: 1 }}>
+                {SECTIONS.map((s) => <div key={s.id} className="snap-sec" />)}
             </div>
         </div>
     );
