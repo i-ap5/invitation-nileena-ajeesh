@@ -21,32 +21,53 @@ const SECTIONS = [
         type: "hero"
     },
     { 
-        id: "story1", img: "img2", label: "CHAPTER I", title: "The Union", 
+        id: "story1", img: "img2", label: "", 
+        title: "The Union", 
         body: "A beautiful journey beginning with a single step, leading us to our forever.",
-        align: "flex-start", justify: "center",
-        mobileBgPos: "center"
+        align: "flex-end", justify: "flex-start",
+        mobileBgPos: "center",
+        type: "editorial",
+        titleColor: "#613B2C", 
+        bodyColor: "#816955",  
+        sentenceCase: true,
+        customTopPadding: "80px",
+        reduceBodyGap: true
     },
     { 
-        id: "story2", img: "img3", label: "CHAPTER II", title: "The Promise", 
-        body: "Bound by love and guided by grace, two hearts becoming one.",
-        align: "flex-end", justify: "center",
-        mobileBgPos: "center"
+        id: "story2", img: "img3", label: "", 
+        title: "The Promise", 
+        body: "Bound by love and guided by grace,\ntwo hearts becoming one.",
+        align: "flex-start", justify: "flex-start", // LEFT TOP
+        mobileBgPos: "center",
+        type: "editorial",
+        titleColor: "#8B5E3C", 
+        bodyColor: "#A68966",  
+        sentenceCase: true,
+        customTopPadding: "280px",
+        reduceBodyGap: true
     },
     { 
-        id: "details", img: "img4", label: "THE WEDDING", title: "MAY 01, 2026", 
+        id: "details", img: "img4", label: "JOIN US ON OUR SPECIAL DAY", title: "MAY 01, 2026", 
         body: "3:00 PM | Edassery Sealine Villa Stay\nCherai, Kochi", 
-        type: "cta", align: "center", justify: "flex-end",
-        mobileBgPos: "center"
+        type: "cta", 
+        align: "center", justify: "flex-end", 
+        mobileBgPos: "center",
+        titleColor: "#F5F5F0", 
+        bodyColor: "#F5F5F0",
+        accentColor: "#F3B994", 
+        sentenceCase: true,
+        customBottomPadding: "30px",
+        tightTitle: true
     },
 ];
 
-const G = "#D4AF37"; // REVERTED: Old Gold
-const W = "#F5F5F0"; // REVERTED: Silk White
-const S = "rgba(245,245,240,0.6)"; // REVERTED: Soft White
-const H = "#FFFCEB"; // Ivory for Top Header (User's specific preference)
+const G = "#D4AF37"; // Old Gold
+const W = "#F5F5F0"; // Silk White
+const S = "rgba(245,245,240,0.6)"; // Soft White
+const H = "#FFFCEB"; // Ivory for Top Header
 
 /* ─────────────────────────────────────────────────────────────────────────
-   CINEMATIC BACKGROUND — GRADIENTS REVERTED
+   CINEMATIC BACKGROUND — (UNTOUCHED)
 ───────────────────────────────────────────────────────────────────────── */
 function CinematicBg({ activeIdx, scrollYProgress, isMobile }) {
     const section = SECTIONS[activeIdx];
@@ -77,10 +98,8 @@ function CinematicBg({ activeIdx, scrollYProgress, isMobile }) {
             </AnimatePresence>
             
             <div className="dust-layer" style={{ position: "absolute", inset: 0, zIndex: 4, pointerEvents: "none", opacity: 0.15 }} />
-            
             <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "rgba(5,5,5,0.08)", pointerEvents: "none" }} />
             
-            {/* REVERTED: Deep Obsidian Bottom Gradient */}
             <motion.div 
                 animate={{ opacity: activeIdx === 0 ? 1 : 0.7 }}
                 style={{ 
@@ -94,7 +113,7 @@ function CinematicBg({ activeIdx, scrollYProgress, isMobile }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   HERO ANIMATIONS — Balanced Sparkles
+   HERO ANIMATIONS — (UNTOUCHED)
 ───────────────────────────────────────────────────────────────────────── */
 function HeroElements({ isMobile }) {
     return (
@@ -149,7 +168,7 @@ function HeroElements({ isMobile }) {
 /* ─────────────────────────────────────────────────────────────────────────
    REFINED TEXT PLACEMENT
 ───────────────────────────────────────────────────────────────────────── */
-function EditorialText({ activeIdx, isMobile }) {
+function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
     return (
         <div style={{ position: "fixed", inset: 0, zIndex: 20, pointerEvents: "none" }}>
             <AnimatePresence mode="wait">
@@ -170,7 +189,6 @@ function EditorialText({ activeIdx, isMobile }) {
                                 <HeroElements isMobile={isMobile} />
                                 
                                 <div style={{ position: "absolute", inset: 0, padding: isMobile ? "60px 40px" : "100px" }}>
-                                    {/* Top Label Section */}
                                     <motion.div
                                         initial={{ opacity: 0, y: -30 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -184,12 +202,6 @@ function EditorialText({ activeIdx, isMobile }) {
                                             <svg width={isMobile ? "180" : "250"} height={isMobile ? "180" : "250"} viewBox="0 0 200 200" style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%) rotate(-5deg)", opacity: 0.4 }}>
                                                 <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={H} strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="600" className="anim-draw-heart-static" />
                                             </svg>
-                                            <svg width={isMobile ? "120" : "160"} height={isMobile ? "120" : "160"} viewBox="0 0 200 200" style={{ position: "absolute", top: "40px", left: isMobile ? "-100px" : "-150px", transform: "rotate(-25deg)", opacity: 0.25 }}>
-                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={H} strokeWidth="2" fill="none" strokeLinecap="round" className="anim-pulse-heart" />
-                                            </svg>
-                                            <svg width={isMobile ? "120" : "160"} height={isMobile ? "120" : "160"} viewBox="0 0 200 200" style={{ position: "absolute", top: "60px", left: isMobile ? "20px" : "50px", transform: "rotate(15deg)", opacity: 0.25 }}>
-                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={H} strokeWidth="2" fill="none" strokeLinecap="round" className="anim-shimmer-heart" />
-                                            </svg>
                                         </div>
                                         <div style={{ width: "1px", height: isMobile ? "20px" : "40px", background: H, opacity: 0.4 }} />
                                         <span style={{ 
@@ -201,7 +213,6 @@ function EditorialText({ activeIdx, isMobile }) {
                                         </span>
                                     </motion.div>
 
-                                    {/* Bottom Names + Date */}
                                     <div style={{ position: "absolute", bottom: isMobile ? "6%" : "10%", left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center" }}>
                                         <div style={{ position: "relative", width: "100%", height: isMobile ? "130px" : "220px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                             <motion.h1
@@ -213,6 +224,7 @@ function EditorialText({ activeIdx, isMobile }) {
                                                     fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "3.5rem" : "9rem", 
                                                     fontWeight: 600, fontStyle: "italic", color: W, 
                                                     top: isMobile ? "0px" : "-10px",
+                                                    fontVariantNumeric: "lining-nums"
                                                 }}
                                             >
                                                 Nileena
@@ -236,6 +248,7 @@ function EditorialText({ activeIdx, isMobile }) {
                                                     fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "3.5rem" : "9rem", 
                                                     fontWeight: 600, fontStyle: "italic", color: W, 
                                                     bottom: isMobile ? "0px" : "-10px",
+                                                    fontVariantNumeric: "lining-nums"
                                                 }}
                                             >
                                                 Ajeesh
@@ -249,20 +262,12 @@ function EditorialText({ activeIdx, isMobile }) {
                                             style={{ 
                                                 fontFamily: "'Montserrat', sans-serif", fontSize: "0.75rem", color: G, 
                                                 letterSpacing: "0.6em", marginTop: "1rem", borderTop: `0.5px solid rgba(212,175,55,0.2)`, paddingTop: "1.5rem",
-                                                textTransform: "uppercase"
+                                                textTransform: "uppercase",
+                                                fontVariantNumeric: "lining-nums"
                                             }}
                                         >
                                             {data.date}
                                         </motion.div>
-
-                                        <motion.p
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 0.4 }}
-                                            transition={{ delay: 1.8 }}
-                                            style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.5rem", color: S, letterSpacing: "0.3em", marginTop: "1.2rem" }}
-                                        >
-                                            INVITING YOU TO OUR WEDDING
-                                        </motion.p>
                                     </div>
                                 </div>
                             </motion.div>
@@ -277,45 +282,61 @@ function EditorialText({ activeIdx, isMobile }) {
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 1.8, ease: [0.19, 1, 0.22, 1] }}
                             style={{ 
-                                position: "absolute", inset: 0, padding: isMobile ? "40px" : "80px",
+                                position: "absolute", inset: 0, 
+                                padding: isMobile ? "40px" : (data.customTopPadding ? `${data.customTopPadding} 80px 80px 80px` : (data.customBottomPadding ? `80px 80px ${data.customBottomPadding} 80px` : "80px")),
                                 display: "flex", alignItems: data.justify, justifyContent: data.align,
-                                textAlign: isMobile ? "center" : (data.align === "flex-start" ? "left" : data.align === "flex-end" ? "right" : "center")
+                                // RESPECT ALIGN PROP ON MOBILE TOO
+                                textAlign: (data.align === "flex-start" ? "left" : data.align === "flex-end" ? "right" : "center")
                             }}
                         >
-                            <div style={{ maxWidth: isMobile ? "100%" : "600px", display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : (data.align === "flex-start" ? "flex-start" : data.align === "flex-end" ? "flex-end" : "center") }}>
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 0.8 }}
-                                    transition={{ delay: 0.5 }}
-                                    style={{ 
-                                        fontFamily: "'Montserrat', sans-serif", fontSize: "0.55rem", color: G, 
-                                        letterSpacing: "1em", textTransform: "uppercase", marginBottom: "2rem"
-                                    }}
-                                >
-                                    {data.label}
-                                </motion.div>
+                            <div style={{ maxWidth: isMobile ? "100%" : "600px", display: "flex", flexDirection: "column", alignItems: (data.align === "flex-start" ? "flex-start" : data.align === "flex-end" ? "flex-end" : "center") }}>
+                                {data.label && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ delay: 0.5 }}
+                                        style={{ 
+                                            fontFamily: "'Montserrat', sans-serif", fontSize: "0.6rem", color: data.accentColor || data.titleColor || G, 
+                                            letterSpacing: "0.8em", textTransform: "uppercase", marginBottom: "1.2rem",
+                                            fontWeight: 600,
+                                            textShadow: "0 2px 15px rgba(0,0,0,0.8)"
+                                        }}
+                                    >
+                                        {data.label}
+                                    </motion.div>
+                                )}
 
                                 <h1 style={{ 
-                                    fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "3rem" : "6rem", 
-                                    fontWeight: 300, fontStyle: "italic", color: W, lineHeight: 1.1, marginBottom: "2.5rem"
+                                    fontFamily: "'Cormorant Garamond', serif", 
+                                    fontSize: (data.id === "story1" || data.id === "story2" || data.id === "details") ? (isMobile ? "3.5rem" : "9rem") : (isMobile ? "3rem" : "6rem"), 
+                                    fontWeight: 600, 
+                                    fontStyle: "italic", color: data.titleColor || W, lineHeight: 1.1, 
+                                    marginBottom: data.reduceBodyGap || data.tightTitle ? "0.5rem" : (data.label ? "2.5rem" : "1.5rem"),
+                                    letterSpacing: "-0.02em",
+                                    fontVariantNumeric: "lining-nums"
                                 }}>
                                     {data.title}
                                 </h1>
 
-                                <div style={{ width: "60px", height: "1px", background: G, opacity: 0.4, marginBottom: "2.5rem" }} />
+                                <div style={{ 
+                                    width: "60px", height: "1px", background: data.accentColor || data.titleColor || G, opacity: 0.4, 
+                                    marginBottom: data.reduceBodyGap || data.tightTitle ? "1rem" : "2.5rem"
+                                }} />
 
                                 <p style={{ 
-                                    fontFamily: "'Montserrat', sans-serif", fontSize: isMobile ? "0.85rem" : "0.75rem", 
-                                    color: S, lineHeight: 2.2, letterSpacing: "0.2em", textTransform: "uppercase",
-                                    fontWeight: 200, whiteSpace: "pre-line"
+                                    fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "1.1rem" : "1.25rem", 
+                                    color: data.bodyColor || S, lineHeight: 1.8, letterSpacing: "0.02em", 
+                                    textTransform: data.sentenceCase ? "none" : "uppercase",
+                                    fontWeight: 400, fontStyle: "italic", whiteSpace: "pre-line",
+                                    fontVariantNumeric: "lining-nums"
                                 }}>
                                     {data.body}
                                 </p>
 
                                 {data.type === "cta" && (
-                                    <div style={{ marginTop: "4rem", display: "flex", gap: "1.5rem", pointerEvents: "auto" }}>
-                                        <button className="p-btn">Save Date</button>
-                                        <button className="p-btn ghost">Venue</button>
+                                    <div style={{ marginTop: "3rem", display: "flex", gap: "1.5rem", pointerEvents: "auto" }}>
+                                        <button className="p-btn" onClick={onAddToCalendar}>ADD TO CALENDAR</button>
+                                        <button className="p-btn ghost" style={{ borderColor: data.accentColor || 'rgba(212,175,55,0.3)', color: data.accentColor || G }}>VIEW VENUE</button>
                                     </div>
                                 )}
                             </div>
@@ -367,6 +388,39 @@ export default function EngagementInvitation() {
         window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    const handleAddToCalendar = (e) => {
+        e.preventDefault();
+        const event = {
+            title: "Nileena & Ajeesh Wedding",
+            start: "20260501T150000",
+            end: "20260501T190000",
+            location: "Edassery Sealine Villa Stay, Cherai, Kochi",
+            description: "Join us for the Wedding Ceremony of Nileena & Ajeesh."
+        };
+
+        const icsContent = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "BEGIN:VEVENT",
+            `SUMMARY:${event.title}`,
+            `DTSTART:${event.start}`,
+            `DTEND:${event.end}`,
+            `LOCATION:${event.location}`,
+            `DESCRIPTION:${event.description}`,
+            "END:VEVENT",
+            "END:VCALENDAR"
+        ].join("\n");
+
+        const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "Nileena_Ajeesh_Wedding.ics");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     return (
         <div style={{ background: "#050505", color: W, overflowX: "hidden" }}>
@@ -431,7 +485,7 @@ export default function EngagementInvitation() {
             <AnimatePresence>{!isReady && <Preloader />}</AnimatePresence>
 
             <CinematicBg activeIdx={activeIdx} scrollYProgress={scrollYProgress} isMobile={isMobile} />
-            <EditorialText activeIdx={activeIdx} isMobile={isMobile} />
+            <EditorialText activeIdx={activeIdx} isMobile={isMobile} onAddToCalendar={handleAddToCalendar} />
 
             <div style={{ position: "relative", zIndex: 1 }}>
                 {SECTIONS.map((s) => <div key={s.id} className="snap-sec" />)}
