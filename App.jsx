@@ -48,7 +48,7 @@ const SECTIONS = [
     },
     {
         id: "details", img: "img4", label: "JOIN US ON OUR SPECIAL DAY", title: "MAY 01, 2026",
-        body: "3:00 PM | Edassery Sealine Villa Stay\nCherai, Kochi",
+        body: "11:00 AM | Monarch D nine Banquet Hall\nWest Yakkara",
         type: "cta",
         align: "center", justify: "flex-end",
         mobileBgPos: "90% center",
@@ -101,12 +101,12 @@ function CinematicBg({ activeIdx, scrollYProgress, isMobile }) {
     return (
         <div style={{ position: "fixed", inset: 0, zIndex: 0, background: "#050505", overflow: "hidden" }}>
             <AnimatePresence>
-                <CinematicImage 
-                    key={targetImg} 
-                    section={section} 
-                    idx={activeIdx} 
-                    scrollYProgress={scrollYProgress} 
-                    isMobile={isMobile} 
+                <CinematicImage
+                    key={targetImg}
+                    section={section}
+                    idx={activeIdx}
+                    scrollYProgress={scrollYProgress}
+                    isMobile={isMobile}
                 />
             </AnimatePresence>
 
@@ -298,19 +298,19 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                                 transition={{ duration: 1.5 }}
                                 style={{ position: "absolute", inset: 0, display: "flex", alignItems: "flex-end", justifyContent: "flex-start", padding: isMobile ? "40px" : "100px" }}
                             >
-                                <div style={{ 
-                                    maxWidth: isMobile ? "100%" : "300px", width: "100%", 
+                                <div style={{
+                                    maxWidth: isMobile ? "100%" : "300px", width: "100%",
                                     padding: "20px 30px", background: "rgba(5, 5, 5, 0.45)", backdropFilter: "blur(15px)",
                                     border: `0.5px solid rgba(212, 175, 55, 0.15)`, borderRadius: "1px",
-                                    position: "relative", zIndex: 10 
+                                    position: "relative", zIndex: 10
                                 }}>
-                                    
+
                                     <motion.h1
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         transition={{ delay: 0.5 }}
-                                        style={{ 
-                                            fontFamily: "'Cormorant Garamond', serif", fontSize: "2.2rem", 
+                                        style={{
+                                            fontFamily: "'Cormorant Garamond', serif", fontSize: "2.2rem",
                                             fontWeight: 300, fontStyle: "italic", color: W, lineHeight: 1.1,
                                             marginBottom: "1rem", letterSpacing: "-0.01em", textAlign: "center"
                                         }}
@@ -327,8 +327,8 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                                         <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.95rem", color: G, marginBottom: "0.3rem", fontWeight: 400, letterSpacing: "0.02em" }}>
                                             {data.title}
                                         </div>
-                                        <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.75rem", color: S, lineHeight: 1.4, fontWeight: 300 }}>
-                                            3:00 PM | Edassery Sealine Villa, Cherai
+                                        <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.75rem", color: S, lineHeight: 1.4, fontWeight: 300, whiteSpace: "pre-line" }}>
+                                            {data.body}
                                         </div>
                                     </motion.div>
 
@@ -349,25 +349,29 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                                         transition={{ delay: 1.4 }}
                                         style={{ display: "flex", flexDirection: "column", gap: "0.6rem", pointerEvents: "auto" }}
                                     >
-                                        <button 
-                                            className="p-btn" 
+                                        <button
+                                            className="p-btn"
                                             onClick={onAddToCalendar}
-                                            style={{ 
-                                                width: "100%", background: G, color: "#000", textAlign: "center", padding: "0.7rem", 
-                                                fontSize: "0.85rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, letterSpacing: "0.1em" 
+                                            style={{
+                                                width: "100%", background: G, color: "#000", textAlign: "center", padding: "0.7rem",
+                                                fontSize: "0.85rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, letterSpacing: "0.1em"
                                             }}
                                         >
                                             Save the Date
                                         </button>
-                                        <button 
-                                            className="p-btn ghost" 
-                                            style={{ 
-                                                width: "100%", borderColor: "rgba(255,255,255,0.15)", color: W, textAlign: "center", padding: "0.7rem", 
-                                                fontSize: "0.85rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, letterSpacing: "0.1em" 
+                                        <a
+                                            href="https://maps.app.goo.gl/888MfHi7EK4RfqdN7"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="p-btn ghost"
+                                            style={{
+                                                width: "100%", borderColor: "rgba(255,255,255,0.15)", color: W, textAlign: "center", padding: "0.7rem",
+                                                fontSize: "0.85rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, letterSpacing: "0.1em",
+                                                textDecoration: "none", display: "block"
                                             }}
                                         >
                                             Get Directions
-                                        </button>
+                                        </a>
                                     </motion.div>
                                 </div>
                             </motion.div>
@@ -447,22 +451,22 @@ function Preloader({ isMobile }) {
         <motion.div
             exit={{ opacity: 0 }}
             transition={{ duration: 1.5, ease: "easeInOut" }}
-            style={{ 
-                position: "fixed", inset: 0, zIndex: 1000, 
-                background: "#050505", 
+            style={{
+                position: "fixed", inset: 0, zIndex: 1000,
+                background: "#050505",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 overflow: "hidden"
             }}
         >
             {/* The Convergence Container */}
             <div style={{ position: "relative", width: "300px", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                
+
                 {/* Ring 1 - Nileena */}
                 <motion.div
                     initial={{ x: -150, opacity: 0 }}
                     animate={{ x: 20, opacity: 0.4 }}
                     transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
-                    style={{ 
+                    style={{
                         position: "absolute", width: "120px", height: "120px",
                         border: `1px solid ${G}`, borderRadius: "50%", filter: "blur(1px)"
                     }}
@@ -473,7 +477,7 @@ function Preloader({ isMobile }) {
                     initial={{ x: 150, opacity: 0 }}
                     animate={{ x: -20, opacity: 0.4 }}
                     transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
-                    style={{ 
+                    style={{
                         position: "absolute", width: "120px", height: "120px",
                         border: `1px solid ${G}`, borderRadius: "50%", filter: "blur(1px)"
                     }}
@@ -484,7 +488,7 @@ function Preloader({ isMobile }) {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 1.2, duration: 1.5 }}
-                    style={{ 
+                    style={{
                         zIndex: 10, textAlign: "center",
                         fontFamily: "'Cormorant Garamond', serif", color: W,
                         fontSize: isMobile ? "1.8rem" : "3rem", fontStyle: "italic"
@@ -503,7 +507,7 @@ function Preloader({ isMobile }) {
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 2, opacity: [0, 0.2, 0] }}
                     transition={{ delay: 1, duration: 2 }}
-                    style={{ 
+                    style={{
                         position: "absolute", width: "100px", height: "100px",
                         background: G, borderRadius: "50%", filter: "blur(40px)"
                     }}
@@ -518,7 +522,7 @@ function Preloader({ isMobile }) {
                 style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden" }}
             >
                 {[...Array(5)].map((_, i) => (
-                    <div key={i} style={{ 
+                    <div key={i} style={{
                         position: "absolute", top: `${i * 20}%`, left: 0, right: 0,
                         height: "1px", background: `linear-gradient(90deg, transparent, ${G}, transparent)`
                     }} />
@@ -528,7 +532,7 @@ function Preloader({ isMobile }) {
     );
 }
 
-export default function EngagementInvitation() {
+export default function WeddingInvitation() {
     const [activeIdx, setActiveIdx] = useState(0);
     const [isReady, setIsReady] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
@@ -537,7 +541,7 @@ export default function EngagementInvitation() {
     useEffect(() => {
         const check = () => setIsMobile(window.innerWidth < 900);
         check(); window.addEventListener("resize", check);
-        
+
         // PRIORITIZED LOADING LOGIC
         const criticalAssets = ["/assets/1.webp", "/assets/2.webp"];
         const secondaryAssets = ["/assets/3.webp", "/assets/4.webp"];
@@ -584,9 +588,9 @@ export default function EngagementInvitation() {
         e.preventDefault();
         const event = {
             title: "Nileena & Ajeesh Wedding",
-            start: "20260501T150000",
-            end: "20260501T190000",
-            location: "Edassery Sealine Villa Stay, Cherai, Kochi",
+            start: "20260501T110000",
+            end: "20260501T150000",
+            location: "Monarch D nine Banquet Hall, West Yakkara",
             description: "Join us for the Wedding Ceremony of Nileena & Ajeesh."
         };
 
@@ -681,6 +685,31 @@ export default function EngagementInvitation() {
             <div style={{ position: "relative", zIndex: 1 }}>
                 {SECTIONS.map((s) => <div key={s.id} className="snap-sec" />)}
             </div>
+            {/* SCROLL INDICATOR (Bottom Right) */}
+            <motion.div
+                style={{
+                    position: "fixed", bottom: "40px", right: "40px", zIndex: 50,
+                    display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem",
+                    opacity: useTransform(scrollYProgress, [0, 0.1], [1, 0]),
+                    pointerEvents: "none",
+                    display: activeIdx === SECTIONS.length - 1 ? "none" : "flex"
+                }}
+            >
+                <span style={{
+                    fontFamily: "'Montserrat', sans-serif", fontSize: "0.55rem", color: W,
+                    letterSpacing: "0.5em", textTransform: "uppercase", writingMode: "vertical-rl",
+                    opacity: 0.5
+                }}>
+                    Scroll Down
+                </span>
+                <div style={{ width: "1px", height: "60px", background: "rgba(212,175,55,0.2)", position: "relative", overflow: "hidden" }}>
+                    <motion.div
+                        animate={{ y: ["-100%", "100%"] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "40%", background: G, boxShadow: `0 0 10px ${G}` }}
+                    />
+                </div>
+            </motion.div>
         </div>
     );
 }
