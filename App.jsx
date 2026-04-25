@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { motion, useScroll, useTransform, AnimatePresence, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence, useSpring, LayoutGroup } from "framer-motion";
 
 /* ─────────────────────────────────────────────────────────────────────────
    CONTENT & CONFIG
@@ -13,7 +13,7 @@ const IMAGES = {
 
 const SECTIONS = [
     {
-        id: "hero", img: "img1", label: "A CELEBRATION OF LOVE", title: "Nileena & Ajeesh",
+        id: "hero", img: "img1", label: "NILEENA & AJEESH", title: "Nileena & Ajeesh",
         body: "Inviting you to share in our joy as we begin our life together.",
         date: "MAY 01, 2026",
         align: "center", justify: "center",
@@ -23,7 +23,7 @@ const SECTIONS = [
     {
         id: "story1", img: "img2", label: "",
         title: "The Union",
-        body: "A beautiful journey beginning with a single step, leading us to our forever.",
+        body: "From different paths to a shared future. Our journey continues here.",
         align: "flex-end", justify: "flex-start",
         mobileBgPos: "center",
         type: "editorial",
@@ -35,13 +35,13 @@ const SECTIONS = [
     },
     {
         id: "story2", img: "img3", label: "",
-        title: "The Promise",
-        body: "Bound by love and guided by grace,\ntwo hearts becoming one.",
+        title: "The Best Part",
+        body: "Beyond the big moments, it’s the simple peace of being side by side.",
         align: "flex-start", justify: "flex-start", // LEFT TOP
         mobileBgPos: "center",
         type: "editorial",
         titleColor: "#8B5E3C",
-        bodyColor: "#A68966",
+        bodyColor: "#8B5E3C",
         sentenceCase: true,
         customTopPadding: "280px",
         reduceBodyGap: true
@@ -79,7 +79,7 @@ function CinematicImage({ section, idx, scrollYProgress, isMobile }) {
 
     return (
         <motion.div
-            initial={{ opacity: 0, filter: "blur(15px)" }}
+            initial={idx === 0 ? { opacity: 0.9, filter: "blur(0px)" } : { opacity: 0, filter: "blur(15px)" }}
             animate={{ opacity: 0.9, filter: "blur(0px)" }}
             exit={{ opacity: 0, filter: "blur(10px)" }}
             transition={{ duration: 2.5, ease: [0.16, 1, 0.3, 1] }}
@@ -193,7 +193,7 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                         return (
                             <motion.div
                                 key={data.id}
-                                initial={{ opacity: 0 }}
+                                initial={idx === 0 ? { opacity: 1 } : { opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 1.5 }}
@@ -211,14 +211,14 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                                             display: "flex", flexDirection: "column", alignItems: "center", gap: "10px"
                                         }}
                                     >
-                                        <div style={{ position: 'absolute', top: '-60px', pointerEvents: 'none', zIndex: -1 }}>
-                                            <svg width={isMobile ? "180" : "250"} height={isMobile ? "180" : "250"} viewBox="0 0 200 200" style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%) rotate(-5deg)", opacity: 0.4 }}>
-                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={H} strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="600" className="anim-draw-heart-static" />
+                                        <div style={{ position: 'absolute', top: '-40px', pointerEvents: 'none' }}>
+                                            <svg width={isMobile ? "180" : "250"} height={isMobile ? "180" : "250"} viewBox="0 0 200 200" style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%) rotate(-5deg)", opacity: 0.8 }}>
+                                                <path d="M100 160 C 80 145, 10 95, 15 55 C 20 25, 60 15, 85 35 C 92 42, 98 48, 100 55 C 102 48, 108 42, 115 35 C 140 15, 180 25, 185 55 C 190 95, 120 145, 100 160" stroke={H} strokeWidth="3" fill="none" strokeLinecap="round" strokeDasharray="600" strokeDashoffset="600" className="anim-draw-heart-static" />
                                             </svg>
                                         </div>
-                                        <div style={{ width: "1px", height: isMobile ? "20px" : "40px", background: H, opacity: 0.4 }} />
                                         <span style={{
                                             fontFamily: "'Montserrat', sans-serif", fontSize: isMobile ? "0.45rem" : "0.6rem",
+                                            marginTop: isMobile ? "30px" : "45px",
                                             color: H, letterSpacing: isMobile ? "0.6em" : "1.5em", textTransform: "uppercase", textAlign: "center",
                                             fontWeight: 400, textShadow: "0 1px 12px rgba(0,0,0,0.4)"
                                         }}>
@@ -229,39 +229,40 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                                     <div style={{ position: "absolute", bottom: isMobile ? "6%" : "10%", left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center" }}>
                                         <div style={{ position: "relative", width: "100%", height: isMobile ? "130px" : "220px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                             <motion.h1
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0, x: isMobile ? -15 : -60 }}
-                                                transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+                                                layoutId="name-1"
+                                                transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
                                                 style={{
                                                     position: "absolute",
                                                     fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "3.5rem" : "9rem",
-                                                    fontWeight: 600, fontStyle: "italic", color: W,
+                                                    fontWeight: 300, fontStyle: "italic", color: W,
                                                     top: isMobile ? "0px" : "-10px",
-                                                    fontVariantNumeric: "lining-nums"
+                                                    marginRight: isMobile ? "30px" : "120px",
+                                                    fontVariantNumeric: "lining-nums",
+                                                    zIndex: 2
                                                 }}
                                             >
                                                 Nileena
                                             </motion.h1>
 
                                             <motion.div
-                                                initial={{ opacity: 0, scale: 0.5 }}
-                                                animate={{ opacity: 0.6, scale: 1 }}
-                                                transition={{ delay: 0.8, duration: 2 }}
-                                                style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "2rem" : "4rem", color: G, fontStyle: "italic", zIndex: 1 }}
+                                                layoutId="amp"
+                                                transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                                                style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "2.5rem" : "5rem", color: G, fontStyle: "italic", zIndex: 1, opacity: 0.5 }}
                                             >
                                                 &
                                             </motion.div>
 
                                             <motion.h1
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0, x: isMobile ? 15 : 60 }}
-                                                transition={{ duration: 2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                                                layoutId="name-2"
+                                                transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
                                                 style={{
                                                     position: "absolute",
                                                     fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "3.5rem" : "9rem",
-                                                    fontWeight: 600, fontStyle: "italic", color: W,
+                                                    fontWeight: 300, fontStyle: "italic", color: W,
                                                     bottom: isMobile ? "0px" : "-10px",
-                                                    fontVariantNumeric: "lining-nums"
+                                                    marginLeft: isMobile ? "30px" : "120px",
+                                                    fontVariantNumeric: "lining-nums",
+                                                    zIndex: 2
                                                 }}
                                             >
                                                 Ajeesh
@@ -290,91 +291,106 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                     // SIDE MARGIN CTA LAYOUT
                     if (data.type === "cta") {
                         return (
-                            <motion.div
+                            <div
                                 key={data.id}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 1.5 }}
-                                style={{ position: "absolute", inset: 0, display: "flex", alignItems: "flex-end", justifyContent: "flex-start", padding: isMobile ? "40px" : "100px" }}
+                                style={{
+                                    position: "absolute", inset: 0, display: "flex", alignItems: "flex-end",
+                                    justify: "flex-start", padding: isMobile ? "40px" : "100px",
+                                    pointerEvents: "none"
+                                }}
                             >
                                 <div style={{
                                     maxWidth: isMobile ? "100%" : "300px", width: "100%",
-                                    padding: "20px 30px", background: "rgba(5, 5, 5, 0.45)", backdropFilter: "blur(15px)",
-                                    border: `0.5px solid rgba(212, 175, 55, 0.15)`, borderRadius: "1px",
-                                    position: "relative", zIndex: 10
+                                    position: "relative", zIndex: 10, pointerEvents: "auto"
                                 }}>
-
-                                    <motion.h1
+                                    {/* Isolated Blur & Background Layer */}
+                                    <motion.div
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        transition={{ delay: 0.5 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 1.5, ease: "easeOut" }}
                                         style={{
-                                            fontFamily: "'Cormorant Garamond', serif", fontSize: "2.2rem",
-                                            fontWeight: 300, fontStyle: "italic", color: W, lineHeight: 1.1,
-                                            marginBottom: "1rem", letterSpacing: "-0.01em", textAlign: "center"
+                                            position: "absolute", inset: 0, zIndex: -1,
+                                            background: "rgba(5, 5, 5, 0.45)",
+                                            backdropFilter: "blur(5px)", WebkitBackdropFilter: "blur(5px)",
+                                            border: `0.5px solid rgba(212, 175, 55, 0.15)`, borderRadius: "1px"
                                         }}
-                                    >
-                                        Save the Date
-                                    </motion.h1>
+                                    />
 
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: 0.8 }}
-                                        style={{ marginBottom: "1.2rem", textAlign: "center" }}
-                                    >
-                                        <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.95rem", color: G, marginBottom: "0.3rem", fontWeight: 400, letterSpacing: "0.02em" }}>
-                                            {data.title}
-                                        </div>
-                                        <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.75rem", color: S, lineHeight: 1.4, fontWeight: 300, whiteSpace: "pre-line" }}>
-                                            {data.body}
-                                        </div>
-                                    </motion.div>
+                                    {/* Content Wrapper */}
+                                    <div style={{ padding: "20px 30px", position: "relative", zIndex: 1 }}>
 
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: 1.1 }}
-                                        style={{ marginBottom: "1.2rem", textAlign: "center" }}
-                                    >
-                                        <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "0.85rem", color: G, letterSpacing: "0.05em", fontStyle: "italic", opacity: 0.8, textTransform: "none" }}>
-                                            Join us for the celebration
-                                        </div>
-                                    </motion.div>
-
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 1.4 }}
-                                        style={{ display: "flex", flexDirection: "column", gap: "0.6rem", pointerEvents: "auto" }}
-                                    >
-                                        <button
-                                            className="p-btn"
-                                            onClick={onAddToCalendar}
+                                        <motion.h1
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 0.5 }}
                                             style={{
-                                                width: "100%", background: G, color: "#000", textAlign: "center", padding: "0.7rem",
-                                                fontSize: "0.85rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, letterSpacing: "0.1em"
+                                                fontFamily: "'Cormorant Garamond', serif", fontSize: "2.2rem",
+                                                fontWeight: 300, fontStyle: "italic", color: W, lineHeight: 1.1,
+                                                marginBottom: "1rem", letterSpacing: "-0.01em", textAlign: "center"
                                             }}
                                         >
-                                            Save the Date
-                                        </button>
-                                        <a
-                                            href="https://maps.app.goo.gl/888MfHi7EK4RfqdN7"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="p-btn ghost"
-                                            style={{
-                                                width: "100%", borderColor: "rgba(255,255,255,0.15)", color: W, textAlign: "center", padding: "0.7rem",
-                                                fontSize: "0.85rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, letterSpacing: "0.1em",
-                                                textDecoration: "none", display: "block"
-                                            }}
+                                            Mark your calender
+                                        </motion.h1>
+
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 0.8 }}
+                                            style={{ marginBottom: "1.2rem", textAlign: "center" }}
                                         >
-                                            Get Directions
-                                        </a>
-                                    </motion.div>
+                                            <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.95rem", color: G, marginBottom: "0.3rem", fontWeight: 400, letterSpacing: "0.02em" }}>
+                                                {data.title}
+                                            </div>
+                                            <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.75rem", color: S, lineHeight: 1.4, fontWeight: 300, whiteSpace: "pre-line" }}>
+                                                {data.body}
+                                            </div>
+                                        </motion.div>
+
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 1.1 }}
+                                            style={{ marginBottom: "1.2rem", textAlign: "center" }}
+                                        >
+                                            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "0.85rem", color: G, letterSpacing: "0.05em", fontStyle: "italic", opacity: 0.8, textTransform: "none" }}>
+                                                Join us for the celebration
+                                            </div>
+                                        </motion.div>
+
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 1.4 }}
+                                            style={{ display: "flex", flexDirection: "column", gap: "0.6rem", pointerEvents: "auto" }}
+                                        >
+                                            <button
+                                                className="p-btn"
+                                                onClick={onAddToCalendar}
+                                                style={{
+                                                    width: "100%", background: G, color: "#000", textAlign: "center", padding: "0.7rem",
+                                                    fontSize: "0.85rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, letterSpacing: "0.1em"
+                                                }}
+                                            >
+                                                Save the Date
+                                            </button>
+                                            <a
+                                                href="https://maps.app.goo.gl/888MfHi7EK4RfqdN7"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-btn ghost"
+                                                style={{
+                                                    width: "100%", borderColor: "rgba(255,255,255,0.15)", color: W, textAlign: "center", padding: "0.7rem",
+                                                    fontSize: "0.85rem", fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, letterSpacing: "0.1em",
+                                                    textDecoration: "none", display: "block"
+                                                }}
+                                            >
+                                                Get Directions
+                                            </a>
+                                        </motion.div>
+                                    </div>
                                 </div>
-                            </motion.div>
+                            </div>
                         );
                     }
 
@@ -411,13 +427,16 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                                 )}
 
                                 <h1 style={{
-                                    fontFamily: "'Cormorant Garamond', serif",
-                                    fontSize: (data.id === "story1" || data.id === "story2" || data.id === "details") ? (isMobile ? "3.5rem" : "9rem") : (isMobile ? "3rem" : "6rem"),
-                                    fontWeight: 600,
-                                    fontStyle: "italic", color: data.titleColor || W, lineHeight: 1.1,
+                                    fontFamily: (data.id === "story1" || data.id === "story2") ? "'Italiana', serif" : "'Cormorant Garamond', serif",
+                                    fontSize: (data.id === "story1" || data.id === "story2" || data.id === "details") ? (isMobile ? "2.5rem" : "6rem") : (isMobile ? "3rem" : "6rem"),
+                                    fontWeight: (data.id === "story1" || data.id === "story2") ? 400 : (isMobile ? 600 : 300),
+                                    fontStyle: (data.id === "story1" || data.id === "story2") ? "normal" : "italic",
+                                    color: data.titleColor || W,
+                                    lineHeight: isMobile ? 1.1 : (data.id === "story1" || data.id === "story2" ? 1.2 : 1.2),
                                     marginBottom: data.reduceBodyGap || data.tightTitle ? "0.5rem" : (data.label ? "2.5rem" : "1.5rem"),
-                                    letterSpacing: "-0.02em",
-                                    fontVariantNumeric: "lining-nums"
+                                    letterSpacing: (data.id === "story1" || data.id === "story2") ? "0.15em" : "-0.02em",
+                                    fontVariantNumeric: "lining-nums",
+                                    textTransform: (data.id === "story1" || data.id === "story2") ? "uppercase" : "uppercase"
                                 }}>
                                     {data.title}
                                 </h1>
@@ -428,11 +447,13 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                                 }} />
 
                                 <p style={{
-                                    fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? "1.1rem" : "1.25rem",
-                                    color: data.bodyColor || S, lineHeight: 1.8, letterSpacing: "0.02em",
+                                    fontFamily: (data.id === "story1" || data.id === "story2") ? "'Inter', sans-serif" : "'Montserrat', sans-serif",
+                                    fontSize: isMobile ? "0.85rem" : "0.95rem",
+                                    color: data.bodyColor || S, lineHeight: 1.8, letterSpacing: "0.05em",
                                     textTransform: data.sentenceCase ? "none" : "uppercase",
-                                    fontWeight: 400, fontStyle: "italic", whiteSpace: "pre-line",
-                                    fontVariantNumeric: "lining-nums"
+                                    fontWeight: 300, whiteSpace: "pre-line",
+                                    fontVariantNumeric: "lining-nums",
+                                    opacity: 0.8
                                 }}>
                                     {data.body}
                                 </p>
@@ -449,18 +470,27 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
 function Preloader({ isMobile }) {
     return (
         <motion.div
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
+            key="preloader"
+            exit={{ opacity: 1 }}
+            transition={{ duration: 1.5 }}
             style={{
                 position: "fixed", inset: 0, zIndex: 1000,
-                background: "#050505",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 overflow: "hidden"
             }}
         >
-            {/* The Convergence Container */}
-            <div style={{ position: "relative", width: "300px", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <motion.div
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+                style={{ position: "absolute", inset: 0, background: "#050505" }}
+            />
 
+            {/* The Convergence Container */}
+            <motion.div 
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+                style={{ position: "relative", width: "300px", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}
+            >
                 {/* Ring 1 - Nileena */}
                 <motion.div
                     initial={{ x: -150, opacity: 0 }}
@@ -483,24 +513,7 @@ function Preloader({ isMobile }) {
                     }}
                 />
 
-                {/* The Central Reveal */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 1.2, duration: 1.5 }}
-                    style={{
-                        zIndex: 10, textAlign: "center",
-                        fontFamily: "'Cormorant Garamond', serif", color: W,
-                        fontSize: isMobile ? "1.8rem" : "3rem", fontStyle: "italic"
-                    }}
-                >
-                    <motion.div
-                        animate={{ color: [W, G, W] }}
-                        transition={{ duration: 3, repeat: Infinity }}
-                    >
-                        Nileena <span style={{ opacity: 0.4, fontSize: "1.2rem" }}>&</span> Ajeesh
-                    </motion.div>
-                </motion.div>
+
 
                 {/* The Union Glow */}
                 <motion.div
@@ -512,10 +525,27 @@ function Preloader({ isMobile }) {
                         background: G, borderRadius: "50%", filter: "blur(40px)"
                     }}
                 />
-            </div>
+            </motion.div>
+
+            <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2, duration: 1.5 }}
+                style={{
+                    position: "absolute", zIndex: 10, display: "flex", alignItems: "center", gap: "10px",
+                    fontFamily: "'Cormorant Garamond', serif", color: W,
+                    fontSize: isMobile ? "1.8rem" : "3rem", fontStyle: "italic", fontWeight: 300
+                }}
+            >
+                <motion.div layoutId="name-1" style={{ color: W }}>Nileena</motion.div>
+                <motion.div layoutId="amp" style={{ opacity: 0.6, fontSize: isMobile ? "1.2rem" : "2rem", color: G }}>&</motion.div>
+                <motion.div layoutId="name-2" style={{ color: W }}>Ajeesh</motion.div>
+            </motion.div>
 
             {/* Subtle Motion Lines */}
             <motion.div
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.5 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.05 }}
                 transition={{ duration: 2 }}
@@ -533,45 +563,118 @@ function Preloader({ isMobile }) {
 }
 
 export default function WeddingInvitation() {
-    const [activeIdx, setActiveIdx] = useState(0);
+    const [activeIdx, setActiveIdx] = useState(() => {
+        if (typeof window !== "undefined") {
+            const vh = window.innerHeight || 800;
+            return Math.min(Math.floor((window.scrollY + vh * 0.5) / vh), 3);
+        }
+        return 0;
+    });
     const [isReady, setIsReady] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const userMuted = useRef(false);
     const { scrollYProgress } = useScroll();
+    
+    const audioRef = useRef(null);
 
     useEffect(() => {
         const check = () => setIsMobile(window.innerWidth < 900);
         check(); window.addEventListener("resize", check);
 
-        // PRIORITIZED LOADING LOGIC
         const criticalAssets = ["/assets/1.webp", "/assets/2.webp"];
-        const secondaryAssets = ["/assets/3.webp", "/assets/4.webp"];
+        const secondaryAssets = ["/assets/3.webp", "/assets/4.webp", "/assets/song.mp3"];
         let loadedCount = 0;
-        const startTime = Date.now();
 
-        const onCriticalLoaded = () => {
-            loadedCount++;
-            if (loadedCount >= criticalAssets.length) {
-                const elapsed = Date.now() - startTime;
-                const remaining = Math.max(0, 2500 - elapsed);
-                setTimeout(() => {
-                    setIsReady(true);
-                    // Silently load secondary assets after first 2 are ready
-                    secondaryAssets.forEach(src => {
-                        const img = new Image();
-                        img.src = src;
-                    });
-                }, remaining);
-            }
+        const preloadItem = (src) => {
+            return new Promise((resolve) => {
+                const isAudio = src.endsWith('.mp3');
+                if (isAudio) {
+                    const audio = new Audio();
+                    audio.src = src;
+                    audio.oncanplaythrough = audio.onerror = () => {
+                        resolve();
+                    };
+                } else {
+                    const img = new Image();
+                    img.src = src;
+                    img.onload = img.onerror = () => {
+                        resolve();
+                    };
+                }
+            });
         };
 
-        criticalAssets.forEach(src => {
-            const img = new Image();
-            img.src = src;
-            img.onload = onCriticalLoaded;
-            img.onerror = onCriticalLoaded; // Continue even if error
+        // Load Critical Assets First
+        Promise.all(criticalAssets.map(src => preloadItem(src))).then(() => {
+            setTimeout(() => setIsReady(true), 1500);
+
+            // Start background preloading of secondary assets
+            secondaryAssets.forEach(src => {
+                if (src.endsWith('.mp3')) {
+                    new Audio().src = src;
+                } else {
+                    new Image().src = src;
+                }
+            });
         });
 
         return () => window.removeEventListener("resize", check);
+    }, []);
+
+    // Sync state with actual audio playback
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        const onPlay = () => setIsPlaying(true);
+        const onPause = () => setIsPlaying(false);
+
+        audio.addEventListener('play', onPlay);
+        audio.addEventListener('pause', onPause);
+
+        return () => {
+            audio.removeEventListener('play', onPlay);
+            audio.removeEventListener('pause', onPause);
+        };
+    }, []);
+
+    // Attempt autoplay when loader finishes
+    useEffect(() => {
+        if (isReady && !userMuted.current && audioRef.current && audioRef.current.paused) {
+            audioRef.current.play().catch(() => {
+                console.log("Autoplay blocked - waiting for interaction");
+            });
+        }
+    }, [isReady]);
+
+    // Handle scroll-based playback fallback
+    useEffect(() => {
+        const handleInteraction = () => {
+            if (audioRef.current && audioRef.current.paused && !userMuted.current) {
+                audioRef.current.play().then(() => {
+                    window.removeEventListener("scroll", handleInteraction);
+                    window.removeEventListener("touchstart", handleInteraction);
+                    window.removeEventListener("click", handleInteraction);
+                    window.removeEventListener("keydown", handleInteraction);
+                    window.removeEventListener("wheel", handleInteraction);
+                }).catch(() => { });
+            }
+        };
+
+        window.addEventListener("scroll", handleInteraction, { passive: true });
+        window.addEventListener("touchstart", handleInteraction, { passive: true });
+        window.addEventListener("click", handleInteraction, { passive: true });
+        window.addEventListener("keydown", handleInteraction, { passive: true });
+        window.addEventListener("wheel", handleInteraction, { passive: true });
+
+        return () => {
+            window.removeEventListener("scroll", handleInteraction);
+            window.removeEventListener("touchstart", handleInteraction);
+            window.removeEventListener("click", handleInteraction);
+            window.removeEventListener("keydown", handleInteraction);
+            window.removeEventListener("wheel", handleInteraction);
+        };
     }, []);
 
     useEffect(() => {
@@ -580,6 +683,7 @@ export default function WeddingInvitation() {
             const idx = Math.min(Math.floor((window.scrollY + vh * 0.5) / vh), 3);
             setActiveIdx(idx);
         };
+        handleScroll();
         window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
@@ -651,8 +755,8 @@ export default function WeddingInvitation() {
                 /* Diverse Heart Animations - With Delay to start after preloader */
                 @keyframes drawHeartOnce { from { stroke-dashoffset: 600; } to { stroke-dashoffset: 0; } }
                 .anim-draw-heart-static { 
-                    animation: drawHeartOnce 5s ease-in-out forwards; 
-                    animation-delay: 3s;
+                    animation: drawHeartOnce 4s ease-in-out forwards; 
+                    animation-delay: 0.5s;
                 }
 
                 @keyframes pulseHeart { 
@@ -677,10 +781,62 @@ export default function WeddingInvitation() {
                 }
             `}</style>
 
-            <AnimatePresence>{!isReady && <Preloader isMobile={isMobile} />}</AnimatePresence>
+            <audio ref={audioRef} src="/assets/song.mp3" loop />
 
-            <CinematicBg activeIdx={activeIdx} scrollYProgress={scrollYProgress} isMobile={isMobile} />
-            <EditorialText activeIdx={activeIdx} isMobile={isMobile} onAddToCalendar={handleAddToCalendar} />
+            <LayoutGroup>
+                <AnimatePresence>{!isReady && <Preloader isMobile={isMobile} />}</AnimatePresence>
+                <CinematicBg activeIdx={activeIdx} scrollYProgress={scrollYProgress} isMobile={isMobile} />
+                {isReady && <EditorialText activeIdx={activeIdx} isMobile={isMobile} onAddToCalendar={handleAddToCalendar} />}
+            </LayoutGroup>
+
+            {/* AUDIO TOGGLE ICON (Minimalist Equalizer) */}
+            {isReady && (
+                <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.8 }}
+                    whileHover={{ opacity: 1, scale: 1.1 }}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (audioRef.current) {
+                            if (isPlaying) {
+                                audioRef.current.pause();
+                                userMuted.current = true;
+                            } else {
+                                audioRef.current.play().catch(() => { });
+                                userMuted.current = false;
+                            }
+                        }
+                    }}
+                    style={{
+                        position: "fixed", top: isMobile ? "30px" : "40px", right: isMobile ? "30px" : "40px", zIndex: 100,
+                        background: "transparent", border: "none", cursor: "pointer", padding: "10px",
+                        display: "flex", alignItems: "center", justifyContent: "center"
+                    }}
+                >
+                    <div style={{ display: "flex", alignItems: "center", gap: "3px", height: "16px" }}>
+                        <motion.div
+                            animate={{ height: isPlaying ? ["4px", "16px", "6px", "12px", "4px"] : "2px", opacity: isPlaying ? 1 : 0.4 }}
+                            transition={isPlaying ? { repeat: Infinity, duration: 1.2, ease: "easeInOut" } : { duration: 0.3 }}
+                            style={{ width: "2px", background: W, borderRadius: "1px" }}
+                        />
+                        <motion.div
+                            animate={{ height: isPlaying ? ["10px", "4px", "16px", "8px", "10px"] : "2px", opacity: isPlaying ? 1 : 0.4 }}
+                            transition={isPlaying ? { repeat: Infinity, duration: 1.4, ease: "easeInOut" } : { duration: 0.3 }}
+                            style={{ width: "2px", background: W, borderRadius: "1px" }}
+                        />
+                        <motion.div
+                            animate={{ height: isPlaying ? ["6px", "12px", "4px", "14px", "6px"] : "2px", opacity: isPlaying ? 1 : 0.4 }}
+                            transition={isPlaying ? { repeat: Infinity, duration: 1.1, ease: "easeInOut" } : { duration: 0.3 }}
+                            style={{ width: "2px", background: W, borderRadius: "1px" }}
+                        />
+                        <motion.div
+                            animate={{ height: isPlaying ? ["14px", "6px", "12px", "4px", "14px"] : "2px", opacity: isPlaying ? 1 : 0.4 }}
+                            transition={isPlaying ? { repeat: Infinity, duration: 1.3, ease: "easeInOut" } : { duration: 0.3 }}
+                            style={{ width: "2px", background: W, borderRadius: "1px" }}
+                        />
+                    </div>
+                </motion.button>
+            )}
 
             <div style={{ position: "relative", zIndex: 1 }}>
                 {SECTIONS.map((s) => <div key={s.id} className="snap-sec" />)}
@@ -688,11 +844,15 @@ export default function WeddingInvitation() {
             {/* SCROLL INDICATOR (Bottom Right) */}
             <motion.div
                 style={{
-                    position: "fixed", bottom: "40px", right: "40px", zIndex: 50,
-                    display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem",
-                    opacity: useTransform(scrollYProgress, [0, 0.1], [1, 0]),
+                    position: "fixed", bottom: "40px",
+                    right: activeIdx === 2 ? "auto" : "40px",
+                    left: activeIdx === 2 ? "40px" : "auto",
+                    zIndex: 50,
+                    display: activeIdx === SECTIONS.length - 1 ? "none" : "flex",
+                    flexDirection: "column", alignItems: "center", gap: "1.5rem",
                     pointerEvents: "none",
-                    display: activeIdx === SECTIONS.length - 1 ? "none" : "flex"
+                    transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
+                    opacity: activeIdx === SECTIONS.length - 1 ? 0 : 1
                 }}
             >
                 <span style={{
