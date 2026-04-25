@@ -475,7 +475,7 @@ function Preloader({ isMobile }) {
     return (
         <motion.div
             key="preloader"
-            exit={{ opacity: 1 }}
+            exit={{ opacity: 0, pointerEvents: "none" }}
             transition={{ duration: 1.5 }}
             style={{
                 position: "fixed", inset: 0, zIndex: 1000,
@@ -585,44 +585,63 @@ export default function WeddingInvitation() {
         const check = () => setIsMobile(window.innerWidth < 900);
         check(); window.addEventListener("resize", check);
 
-        const criticalAssets = ["/assets/1.webp", "/assets/2.webp", "/assets/song.mp3"];
-        const secondaryAssets = ["/assets/3.webp", "/assets/4.webp"];
-        let loadedCount = 0;
-
+        const criticalAssets = ["/assets/1.webp"]; // Just the first image is critical
+        const secondaryAssets = ["/assets/2.webp", "/assets/3.webp", "/assets/4.webp", "/assets/song.mp3"];
+        
         const preloadItem = (src) => {
             return new Promise((resolve) => {
                 const isAudio = src.endsWith('.mp3');
+                const timeout = setTimeout(() => {
+                    console.warn(`Preload timeout for: ${src}`);
+                    resolve();
+                }, 8000); // 8s safety timeout per item
+
                 if (isAudio) {
                     const audio = new Audio();
                     audio.src = src;
-                    audio.oncanplaythrough = audio.onerror = () => {
+                    // On iOS, audio often won't trigger canplaythrough until user interaction
+                    // So we don't let it block the main entrance
+                    audio.onloadedmetadata = audio.onerror = () => {
+                        clearTimeout(timeout);
                         resolve();
                     };
                 } else {
                     const img = new Image();
                     img.src = src;
                     img.onload = img.onerror = () => {
+                        clearTimeout(timeout);
                         resolve();
                     };
                 }
             });
         };
 
+        // Safety catch: Force ready after 10 seconds regardless of progress
+        const globalTimeout = setTimeout(() => {
+            setIsReady(true);
+        }, 10000);
+
         // Load Critical Assets First
         Promise.all(criticalAssets.map(src => preloadItem(src))).then(() => {
+            clearTimeout(globalTimeout);
             setTimeout(() => setIsReady(true), 1500);
 
             // Start background preloading of secondary assets
             secondaryAssets.forEach(src => {
                 if (src.endsWith('.mp3')) {
-                    new Audio().src = src;
+                    const a = new Audio();
+                    a.src = src;
+                    a.load();
                 } else {
                     new Image().src = src;
                 }
             });
         });
 
-        return () => window.removeEventListener("resize", check);
+        return () => {
+            window.removeEventListener("resize", check);
+            clearTimeout(globalTimeout);
+        };
     }, []);
 
 
@@ -749,7 +768,7 @@ export default function WeddingInvitation() {
                 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
                 html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
                 body { background: #050505; -webkit-font-smoothing: antialiased; }
-                .snap-sec { height: 100vh; scroll-snap-align: start; scroll-snap-stop: always; }
+                .snap-sec { height: 100vh; height: 100dvh; scroll-snap-align: start; scroll-snap-stop: always; }
                 
                 .p-btn {
                     padding: 1rem 2.8rem;
