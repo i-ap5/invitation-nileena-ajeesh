@@ -427,10 +427,10 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                                 )}
 
                                 <h1 style={{
-                                    fontFamily: (data.id === "story1" || data.id === "story2") ? "'Italiana', serif" : "'Cormorant Garamond', serif",
+                                    fontFamily: "'Cormorant Garamond', serif",
                                     fontSize: (data.id === "story1" || data.id === "story2" || data.id === "details") ? (isMobile ? "2.5rem" : "6rem") : (isMobile ? "3rem" : "6rem"),
-                                    fontWeight: (data.id === "story1" || data.id === "story2") ? 400 : (isMobile ? 600 : 300),
-                                    fontStyle: (data.id === "story1" || data.id === "story2") ? "normal" : "italic",
+                                    fontWeight: (data.id === "story1" || data.id === "story2") ? 300 : (isMobile ? 600 : 300),
+                                    fontStyle: "italic",
                                     color: data.titleColor || W,
                                     lineHeight: isMobile ? 1.1 : (data.id === "story1" || data.id === "story2" ? 1.2 : 1.2),
                                     marginBottom: data.reduceBodyGap || data.tightTitle ? "0.5rem" : (data.label ? "2.5rem" : "1.5rem"),
@@ -572,8 +572,7 @@ export default function WeddingInvitation() {
     });
     const [isReady, setIsReady] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const userMuted = useRef(false);
+    const [isPlaying, setIsPlaying] = useState(true);
     const { scrollYProgress } = useScroll();
     
     const audioRef = useRef(null);
@@ -582,8 +581,8 @@ export default function WeddingInvitation() {
         const check = () => setIsMobile(window.innerWidth < 900);
         check(); window.addEventListener("resize", check);
 
-        const criticalAssets = ["/assets/1.webp", "/assets/2.webp"];
-        const secondaryAssets = ["/assets/3.webp", "/assets/4.webp", "/assets/song.mp3"];
+        const criticalAssets = ["/assets/1.webp", "/assets/2.webp", "/assets/song.mp3"];
+        const secondaryAssets = ["/assets/3.webp", "/assets/4.webp"];
         let loadedCount = 0;
 
         const preloadItem = (src) => {
@@ -622,71 +621,89 @@ export default function WeddingInvitation() {
         return () => window.removeEventListener("resize", check);
     }, []);
 
-    // Sync state with actual audio playback
+
+    // Attempt autoplay when loader finishes (Wed2 Logic)
     useEffect(() => {
-        const audio = audioRef.current;
-        if (!audio) return;
-
-        const onPlay = () => setIsPlaying(true);
-        const onPause = () => setIsPlaying(false);
-
-        audio.addEventListener('play', onPlay);
-        audio.addEventListener('pause', onPause);
-
-        return () => {
-            audio.removeEventListener('play', onPlay);
-            audio.removeEventListener('pause', onPause);
-        };
-    }, []);
-
-    // Attempt autoplay when loader finishes
-    useEffect(() => {
-        if (isReady && !userMuted.current && audioRef.current && audioRef.current.paused) {
+        if (isReady && isPlaying && audioRef.current) {
             audioRef.current.play().catch(() => {
                 console.log("Autoplay blocked - waiting for interaction");
             });
         }
-    }, [isReady]);
+    }, [isReady, isPlaying]);
 
-    // Handle scroll-based playback fallback
+    // Audio unlock: mirror Wed2's exact mechanism
+    // Wed2 works because it calls e.preventDefault() on touchmove,
+    // which prevents the touch from becoming a "scroll gesture".
+    // Then touchend is a valid user activation and play() succeeds.
     useEffect(() => {
-        const handleInteraction = () => {
-            if (audioRef.current && audioRef.current.paused && !userMuted.current) {
-                audioRef.current.play().then(() => {
-                    window.removeEventListener("scroll", handleInteraction);
-                    window.removeEventListener("touchstart", handleInteraction);
-                    window.removeEventListener("click", handleInteraction);
-                    window.removeEventListener("keydown", handleInteraction);
-                    window.removeEventListener("wheel", handleInteraction);
-                }).catch(() => { });
+        if (!isReady) return;
+        if (audioRef.current && !audioRef.current.paused) return;
+
+        let unlocked = false;
+
+        // Block the FIRST touchmove so the touch doesn't become a scroll
+        const blockFirstScroll = (e) => {
+            if (!unlocked) {
+                e.preventDefault();
             }
         };
 
-        window.addEventListener("scroll", handleInteraction, { passive: true });
-        window.addEventListener("touchstart", handleInteraction, { passive: true });
-        window.addEventListener("click", handleInteraction, { passive: true });
-        window.addEventListener("keydown", handleInteraction, { passive: true });
-        window.addEventListener("wheel", handleInteraction, { passive: true });
+        // On touchend after blocked scroll, play audio
+        const onTouchEnd = () => {
+            if (unlocked) return;
+            unlocked = true;
+            if (audioRef.current && audioRef.current.paused && isPlaying) {
+                audioRef.current.play().catch(() => { });
+            }
+            cleanup();
+        };
+
+        // Desktop: wheel is a valid user gesture
+        const onWheel = () => {
+            if (unlocked) return;
+            unlocked = true;
+            if (audioRef.current && audioRef.current.paused && isPlaying) {
+                audioRef.current.play().catch(() => { });
+            }
+            cleanup();
+        };
+
+        const cleanup = () => {
+            document.removeEventListener('touchmove', blockFirstScroll);
+            document.removeEventListener('touchend', onTouchEnd, true);
+            document.removeEventListener('wheel', onWheel);
+        };
+
+        document.addEventListener('touchmove', blockFirstScroll, { passive: false, capture: true });
+        document.addEventListener('touchend', onTouchEnd, { capture: true, passive: true });
+        document.addEventListener('wheel', onWheel, { passive: true });
+
+        // Safety: remove interceptors after 5 seconds
+        const timeout = setTimeout(() => {
+            unlocked = true;
+            cleanup();
+        }, 5000);
 
         return () => {
-            window.removeEventListener("scroll", handleInteraction);
-            window.removeEventListener("touchstart", handleInteraction);
-            window.removeEventListener("click", handleInteraction);
-            window.removeEventListener("keydown", handleInteraction);
-            window.removeEventListener("wheel", handleInteraction);
+            clearTimeout(timeout);
+            cleanup();
         };
-    }, []);
+    }, [isReady, isPlaying]);
 
     useEffect(() => {
         const handleScroll = () => {
             const vh = window.innerHeight;
             const idx = Math.min(Math.floor((window.scrollY + vh * 0.5) / vh), 3);
             setActiveIdx(idx);
+            // Play audio on scroll (same as Wed2's goToSlide logic)
+            if (audioRef.current && audioRef.current.paused && isPlaying) {
+                audioRef.current.play().catch(() => { });
+            }
         };
         handleScroll();
         window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+    }, [isPlaying]);
 
     const handleAddToCalendar = (e) => {
         e.preventDefault();
@@ -797,14 +814,11 @@ export default function WeddingInvitation() {
                     whileHover={{ opacity: 1, scale: 1.1 }}
                     onClick={(e) => {
                         e.stopPropagation();
-                        if (audioRef.current) {
-                            if (isPlaying) {
-                                audioRef.current.pause();
-                                userMuted.current = true;
-                            } else {
-                                audioRef.current.play().catch(() => { });
-                                userMuted.current = false;
-                            }
+                        if (isPlaying) {
+                            audioRef.current.pause();
+                            setIsPlaying(false);
+                        } else {
+                            audioRef.current.play().then(() => setIsPlaying(true)).catch(() => { });
                         }
                     }}
                     style={{
