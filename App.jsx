@@ -18,6 +18,7 @@ const SECTIONS = [
         date: "MAY 01, 2026",
         align: "center", justify: "center",
         mobileBgPos: "60% center",
+        desktopBgPos: "center 45%",
         type: "hero"
     },
     {
@@ -26,6 +27,7 @@ const SECTIONS = [
         body: "From different paths to a shared future. Our journey continues here.",
         align: "flex-end", justify: "flex-start",
         mobileBgPos: "center",
+        desktopBgPos: "center 55%",
         type: "editorial",
         titleColor: "#613B2C",
         bodyColor: "#816955",
@@ -39,6 +41,7 @@ const SECTIONS = [
         body: "Beyond the big moments, it’s the simple peace of being side by side.",
         align: "flex-start", justify: "flex-start", // LEFT TOP
         mobileBgPos: "center",
+        desktopBgPos: "center 60%",
         type: "editorial",
         titleColor: "#8B5E3C",
         bodyColor: "#8B5E3C",
@@ -49,9 +52,10 @@ const SECTIONS = [
     {
         id: "details", img: "img4", label: "JOIN US ON OUR SPECIAL DAY", title: "MAY 01, 2026",
         body: "11:00 AM | Monarch D nine Banquet Hall\nWest Yakkara",
+        mobileBgPos: "90% center",
+        desktopBgPos: "center 35%",
         type: "cta",
         align: "center", justify: "flex-end",
-        mobileBgPos: "90% center",
         titleColor: "#F5F5F0",
         bodyColor: "#F5F5F0",
         accentColor: "#F3B994",
@@ -75,7 +79,7 @@ function CinematicImage({ section, idx, scrollYProgress, isMobile }) {
     const scaleRange = (section?.type === "hero" || section?.type === "cta" || section?.id === "story2") ? [0.8, 1.1] : [1.0, 1.25];
     const scrollScale = useTransform(scrollYProgress, [start, end], scaleRange);
     const smoothScale = useSpring(scrollScale, { stiffness: 45, damping: 20 });
-    const bgPos = isMobile ? (section?.mobileBgPos || "center") : "center";
+    const bgPos = isMobile ? (section?.mobileBgPos || "center") : (section?.desktopBgPos || "center");
 
     return (
         <motion.div
@@ -227,7 +231,7 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                                     </motion.div>
 
                                     <div style={{ position: "absolute", bottom: isMobile ? "6%" : "10%", left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center" }}>
-                                        <div style={{ position: "relative", width: "100%", height: isMobile ? "130px" : "220px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        <div style={{ position: "relative", width: "100%", height: isMobile ? "130px" : "260px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                             <motion.h1
                                                 layoutId="name-1"
                                                 transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
@@ -275,7 +279,7 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                                             transition={{ delay: 1.5, duration: 1.5 }}
                                             style={{
                                                 fontFamily: "'Montserrat', sans-serif", fontSize: "0.75rem", color: G,
-                                                letterSpacing: "0.6em", marginTop: "1rem", borderTop: `0.5px solid rgba(212,175,55,0.2)`, paddingTop: "1.5rem",
+                                                letterSpacing: "0.6em", marginTop: isMobile ? "1rem" : "3rem", borderTop: `0.5px solid rgba(212,175,55,0.2)`, paddingTop: "1.5rem",
                                                 textTransform: "uppercase",
                                                 fontVariantNumeric: "lining-nums"
                                             }}
@@ -300,7 +304,7 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                                 }}
                             >
                                 <div style={{
-                                    maxWidth: isMobile ? "100%" : "300px", width: "100%",
+                                    maxWidth: isMobile ? "100%" : "450px", width: "100%",
                                     position: "relative", zIndex: 10, pointerEvents: "auto"
                                 }}>
                                     {/* Isolated Blur & Background Layer */}
@@ -318,7 +322,7 @@ function EditorialText({ activeIdx, isMobile, onAddToCalendar }) {
                                     />
 
                                     {/* Content Wrapper */}
-                                    <div style={{ padding: "20px 30px", position: "relative", zIndex: 1 }}>
+                                    <div style={{ padding: isMobile ? "20px 30px" : "40px 50px", position: "relative", zIndex: 1 }}>
 
                                         <motion.h1
                                             initial={{ opacity: 0 }}
@@ -486,7 +490,7 @@ function Preloader({ isMobile }) {
             />
 
             {/* The Convergence Container */}
-            <motion.div 
+            <motion.div
                 exit={{ opacity: 0 }}
                 transition={{ duration: 1.5, ease: "easeInOut" }}
                 style={{ position: "relative", width: "300px", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}
@@ -574,7 +578,7 @@ export default function WeddingInvitation() {
     const [isMobile, setIsMobile] = useState(false);
     const [isPlaying, setIsPlaying] = useState(true);
     const { scrollYProgress } = useScroll();
-    
+
     const audioRef = useRef(null);
 
     useEffect(() => {
